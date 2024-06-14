@@ -7,10 +7,13 @@ interface Props {
 
 export default function MainLayout({ children }: Props) {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      {children}
-      <Footer />
-    </>
+
+      <div className="flex flex-col">
+        {children}
+        <Footer />
+      </div>
+    </div>
   );
 }

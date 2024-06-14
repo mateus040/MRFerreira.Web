@@ -5,7 +5,7 @@ import "swiper/css";
 
 export default function Produtos() {
   return (
-    <div className="px-8 lg:px-20 py-12 mx-auto" id="produtos">
+    <div className="px-8 lg:px-20 py-12 container mx-auto" id="produtos">
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-2xl sm:text-3xl font-semibold text-center">
           Conheça alguns de nossos produtos

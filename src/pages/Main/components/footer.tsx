@@ -11,7 +11,7 @@ import { IoLocationSharp } from "react-icons/io5";
 export default function Footer() {
   return (
     <div className="bg-white shadow-lg">
-      <div className="px-8 lg:px-24 py-12 mx-auto">
+      <div className="px-8 lg:px-24 py-12 container mx-auto">
         <div className="grid grid-cols-12 gap-10 xl:gap-5 mb-10">
           <div className="col-span-12 xl:col-span-4">
             <img src="/images/logo-transparente.png" className="h-[120px]" />

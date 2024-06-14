@@ -9,8 +9,8 @@ export default function Header() {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50">
-      <div className="flex justify-between items-center px-8 lg:px-20 py-5 mx-auto bg-white shadow-lg">
+    <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-lg">
+      <div className="flex justify-between items-center px-8 lg:px-20 py-5 container mx-auto">
         <a href="#home">
           <p className="text-xl font-semibold">MR Ferreira</p>
           <p className="font-semibold mx-4" style={{ fontSize: "12px" }}>

@@ -1,6 +1,6 @@
 export default function Sobre() {
   return (
-    <div className="px-8 lg:px-20 py-12 mx-auto" id="sobre">
+    <div className="px-8 lg:px-20 py-12 container mx-auto" id="sobre">
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-2xl sm:text-3xl font-semibold text-center">
           Sobre nossa empresa
