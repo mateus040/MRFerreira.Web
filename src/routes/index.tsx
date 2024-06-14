@@ -4,7 +4,8 @@ import Main from "../pages/Main";
 import Admin from "../pages/Admin";
 import Fornecedores from "../pages/Admin/fornecedores";
 import AdicionarFornecedores from "../pages/Admin/fornecedores/create";
-import Produtos from "../pages/Admin/components/produtos";
+import Produtos from "../pages/Admin/produtos";
+import AdicionarProdutos from "../pages/Admin/produtos/create";
 
 export default function AppRouter() {
   return (
@@ -22,6 +23,10 @@ export default function AppRouter() {
           element={<AdicionarFornecedores />}
         />
         <Route path="/admin/produtos" element={<Produtos />} />
+        <Route
+          path="/admin/produtos/adicionar"
+          element={<AdicionarProdutos />}
+        />
       </Routes>
     </Router>
   );

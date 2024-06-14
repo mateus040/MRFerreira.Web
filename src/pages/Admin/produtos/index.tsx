@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import AdminLayout from "../../../../components/Layouts/admin";
-import BreadCrumb, { Page } from "../../../../components/breadCrumb";
+import BreadCrumb, { Page } from "../../../components/breadCrumb";
+import AdminLayout from "../../../components/Layouts/admin";
 
 export default function Produtos() {
   const breadCrumbHistory: Page[] = [
