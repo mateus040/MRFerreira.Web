@@ -7,6 +7,7 @@ import AdicionarFornecedores from "../pages/Admin/fornecedores/create";
 import Produtos from "../pages/Admin/produtos";
 import AdicionarProdutos from "../pages/Admin/produtos/create";
 import ProductsByProvider from "../pages/ProductsByProvider";
+import ByProduct from "../pages/ByProduct";
 
 export default function AppRouter() {
   return (
@@ -19,6 +20,11 @@ export default function AppRouter() {
         <Route
           path="/fornecedor/:providerId"
           element={<ProductsByProvider />}
+        />
+
+        <Route
+          path="/fornecedor/:providerId/:productId"
+          element={<ByProduct />}
         />
 
         {/* Private Routes */}

@@ -1,5 +1,6 @@
 import { FaBars } from "react-icons/fa6";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const [menuResponsive, setMenuResponsive] = useState<boolean>(false);
@@ -11,12 +12,12 @@ export default function Header() {
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-lg">
       <div className="flex justify-between items-center px-8 lg:px-12 py-5 container mx-auto">
-        <a href="#home">
+        <Link to="/">
           <p className="text-xl font-semibold">MR Ferreira</p>
           <p className="font-semibold mx-4" style={{ fontSize: "12px" }}>
             Representações
           </p>
-        </a>
+        </Link>
         <div
           className={`nav-links duration-500 lg:static absolute bg-white lg:min-h-fit min-h-[60vh] left-0 ${
             menuResponsive ? "top-full" : "top-[-500%]"
