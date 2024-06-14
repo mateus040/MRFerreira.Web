@@ -7,7 +7,7 @@ export default function Home() {
           className="min-w-full aspect-video object-cover fundo-home"
         />
       </div>
-      <div className="absolute inset-0 bg-black opacity-80 fundo-home"></div>
+      <div className="absolute inset-0 bg-black opacity-80 fundo-home mt-10"></div>
       <div className="absolute inset-0 flex items-center justify-center sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2 text-white text-center mx-auto container">
         <div>
           <h1 className="uppercase text-2xl sm:text-3xl lg:text-4xl font-bold">

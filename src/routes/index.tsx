@@ -6,6 +6,7 @@ import Fornecedores from "../pages/Admin/fornecedores";
 import AdicionarFornecedores from "../pages/Admin/fornecedores/create";
 import Produtos from "../pages/Admin/produtos";
 import AdicionarProdutos from "../pages/Admin/produtos/create";
+import ProductsByProvider from "../pages/ProductsByProvider";
 
 export default function AppRouter() {
   return (
@@ -14,6 +15,11 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/" element={<Main />} />
+
+        <Route
+          path="/fornecedor/:providerId"
+          element={<ProductsByProvider />}
+        />
 
         {/* Private Routes */}
         <Route path="/admin" element={<Admin />} />

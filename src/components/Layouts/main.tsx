@@ -11,9 +11,10 @@ export default function MainLayout({ children }: Props) {
       <Header />
 
       <div className="flex flex-col">
-        {children}
+        <main className="grow mt-10">{children}</main>
         <Footer />
       </div>
+      
     </div>
   );
 }
