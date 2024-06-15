@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Login from "../pages/Login";
 import Main from "../pages/Main";
 import Admin from "../pages/Admin";
@@ -8,6 +13,17 @@ import Produtos from "../pages/Admin/produtos";
 import AdicionarProdutos from "../pages/Admin/produtos/create";
 import ProductsByProvider from "../pages/ProductsByProvider";
 import ByProduct from "../pages/ByProduct";
+import { useAuth } from "../context/AuthContext";
+
+interface PrivateRouteProps {
+  element: React.ReactElement;
+}
+
+const PrivateRoute = ({ element }: PrivateRouteProps) => {
+  const { token } = useAuth();
+
+  return token ? element : <Navigate to="/" />;
+};
 
 export default function AppRouter() {
   return (
