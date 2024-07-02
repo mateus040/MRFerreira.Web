@@ -105,11 +105,7 @@ export default function Fornecedores() {
         </Link>
       </div>
 
-      {loading && (
-        <div className="flex items-center justify-center mt-10">
-          <Loading />
-        </div>
-      )}
+      {loading && <Loading centered />}
 
       {!loading && (
         <>

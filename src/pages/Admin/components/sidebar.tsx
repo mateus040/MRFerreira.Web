@@ -18,28 +18,45 @@ export default function SidebarAdmin({ isSidebarOpen }: Props) {
       <div className="h-full flex flex-col bg-slate-900 min-h-screen">
         <div className="p-4 pb-2 flex items-center justify-center lg:justify-start">
           <img src="/images/logo-branco.png" className="w-20 h-20 rounded-md" />
-          <p className="hidden lg:flex mx-2 font-semibold text-slate-400">Painel Admin</p>
+          <p className="hidden lg:flex mx-2 font-semibold text-slate-400">
+            Painel Admin
+          </p>
         </div>
         <ul className="flex-1 p-4 lg:p-2">
           <li className="flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white mb-2 text-slate-400">
-            <BiHome size={25} className="lg:-mt-1" />
             <Link
               to="/"
-              className="hidden lg:flex overflow-hidden transition-all w-52 ml-3"
+              className="flex items-center overflow-hidden transition-all"
             >
-              Home
+              <BiHome size={25} className="lg:-mt-1" />
+
+              <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
+                Início
+              </span>
             </Link>
           </li>
           <li className="flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white mb-2 text-slate-400">
-            <FaCartFlatbed size={25} className="lg:-mt-1" />
-            <Link to="/admin/fornecedores" className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
-              Fornecedores
+            <Link
+              to="/admin/fornecedores"
+              className="flex items-center overflow-hidden transition-all"
+            >
+              <FaCartFlatbed size={25} className="lg:-mt-1" />
+
+              <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
+                Fornecedores
+              </span>
             </Link>
           </li>
           <li className="flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white text-slate-400">
-            <BsBoxSeam size={25} className="lg:-mt-1" />
-            <Link to="/admin/produtos" className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
-              Produtos
+            <Link
+              to="/admin/produtos"
+              className="flex items-center overflow-hidden transition-all"
+            >
+              <BsBoxSeam size={25} className="lg:-mt-1" />
+
+              <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
+                Produtos
+              </span>
             </Link>
           </li>
         </ul>

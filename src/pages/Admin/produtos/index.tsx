@@ -16,11 +16,11 @@ export default function Produtos() {
 
   return (
     <AdminLayout>
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between mb-3">
         <BreadCrumb history={breadCrumbHistory} />
         <Link
           to="/admin/produtos/adicionar"
-          className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all"
+          className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
         >
           Adicionar
         </Link>
