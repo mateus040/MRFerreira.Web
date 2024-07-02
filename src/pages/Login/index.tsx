@@ -1,7 +1,49 @@
+import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { login } = useAuth();
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        "https://mrferreira-api.vercel.app/api/api/login/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        login(data.token);
+        navigate("/admin");
+        toast.success("Bem-vindo!");
+      } else {
+        const errorData = await response.json();
+        if (response.status === 401) {
+          toast.error("Credenciais inválidas.");
+        } else {
+          toast.error("Erro ao fazer login: " + errorData.error);
+        }
+      }
+    } catch (error) {
+      toast.error("Erro ao fazer login: " + error);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
       <div className="relative flex items-end px-4 pb-10 pt-60 sm:pb-16 md:justify-center lg:pb-24 bg-gray-50 sm:px-6 lg:px-8">
@@ -63,7 +105,7 @@ export default function Login() {
           Acesse sua conta
         </h2>
 
-        <form action="#" method="POST" className="mt-8">
+        <form onSubmit={handleLogin} className="mt-8">
           <div className="space-y-5">
             <div>
               <label className="text-base font-medium text-gray-900">
@@ -76,6 +118,8 @@ export default function Login() {
                   id="email"
                   placeholder="Informe seu e-mail"
                   className="block w-full py-4 pl-5 pr-4 text-black placeholder-gray-500 transition-all duration-200 border border-gray-200 rounded-md bg-gray-50 focus:outline-none focus:border-black focus:bg-white"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -89,10 +133,12 @@ export default function Login() {
               <div className="mt-2.5 relative text-gray-400 focus-within:text-gray-600">
                 <input
                   type="password"
-                  name=""
-                  id=""
+                  name="password"
+                  id="password"
                   placeholder="Informe sua senha"
                   className="block w-full py-4 pl-5 pr-4 text-black placeholder-gray-500 transition-all duration-200 border border-gray-200 rounded-md bg-gray-50 focus:outline-none focus:black focus:bg-whit"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -104,7 +150,10 @@ export default function Login() {
               Entrar
             </button>
 
-            <Link to="/" className="flex items-center justify-center underline cursor-pointer">
+            <Link
+              to="/"
+              className="flex items-center justify-center underline cursor-pointer"
+            >
               Voltar para o início
             </Link>
           </div>
