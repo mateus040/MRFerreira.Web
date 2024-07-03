@@ -10,23 +10,9 @@ import {
   getDownloadURL,
 } from "../../../../firebaseConfig";
 import Loading from "../../../components/loading";
-
-interface Providers {
-  id: string;
-  nome: string;
-  cnpj: string;
-  rua: string;
-  bairro: string;
-  numero: string;
-  cep: string;
-  estado: string;
-  cidade: string;
-  complemento: string | null;
-  email: string;
-  telefone: string;
-  celular: string;
-  logo: string;
-}
+import FornecedorModel from "../../../interface/models/FornecedorModel";
+import toast from "react-hot-toast";
+import { AiOutlineDelete } from "react-icons/ai";
 
 export default function Fornecedores() {
   const breadCrumbHistory: Page[] = [
@@ -43,7 +29,7 @@ export default function Fornecedores() {
   const { token } = useAuth();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [providers, setProviders] = useState<Providers[]>([]);
+  const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [logos, setLogos] = useState<{ [key: string]: string }>({});
 
   const fetchProviders = async () => {
@@ -58,7 +44,7 @@ export default function Fornecedores() {
           },
         }
       );
-      const providersData: Providers[] = response.data.results;
+      const providersData: FornecedorModel[] = response.data.results;
 
       setProviders(providersData);
 
@@ -86,6 +72,30 @@ export default function Fornecedores() {
       console.error("Erro ao buscar fornecedores:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteProvider = async (providerId: string) => {
+    try {
+      await axios.delete(
+        `https://mrferreira-api.vercel.app/api/api/providers/delete/${providerId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedProviders = providers.filter(
+        (provider) => provider.id !== providerId
+      );
+      setProviders(updatedProviders);
+
+      toast.success("Dados deletados com sucesso!");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        toast.error("Erro de solicitação:", err.response?.data || err.message);
+      }
     }
   };
 
@@ -149,6 +159,9 @@ export default function Fornecedores() {
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Logo
                   </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Deletar
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -195,6 +208,12 @@ export default function Fornecedores() {
                           alt="logo"
                         />
                       )}
+                    </td>
+                    <td className="flex items-center text-xl justify-center p-3 text-gray-700 whitespace-nowrap">
+                      <AiOutlineDelete
+                        className="text-red-600 cursor-pointer"
+                        onClick={() => deleteProvider(provider.id)}
+                      />
                     </td>
                   </tr>
                 ))}
