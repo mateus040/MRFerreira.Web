@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "../../../components/Layouts/admin";
 import BreadCrumb, { Page } from "../../../components/breadCrumb";
 import { useAuth } from "../../../context/AuthContext";
@@ -12,7 +12,7 @@ import {
 import Loading from "../../../components/loading";
 import FornecedorModel from "../../../interface/models/FornecedorModel";
 import toast from "react-hot-toast";
-import { AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
 export default function Fornecedores() {
   const breadCrumbHistory: Page[] = [
@@ -28,9 +28,15 @@ export default function Fornecedores() {
 
   const { token } = useAuth();
 
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [logos, setLogos] = useState<{ [key: string]: string }>({});
+
+  const navigateToEditPage = (company: FornecedorModel) => {
+    navigate(`/admin/fornecedores/editar/${company.id}`);
+  };
 
   const fetchProviders = async () => {
     setLoading(true);
@@ -148,6 +154,9 @@ export default function Fornecedores() {
                     Estado
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Complemento
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Email
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
@@ -160,7 +169,7 @@ export default function Fornecedores() {
                     Logo
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                    Deletar
+                    Ações
                   </th>
                 </tr>
               </thead>
@@ -192,6 +201,9 @@ export default function Fornecedores() {
                       {provider.estado}
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {provider.complemento}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                       {provider.email}
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -209,10 +221,16 @@ export default function Fornecedores() {
                         />
                       )}
                     </td>
-                    <td className="flex items-center text-xl justify-center p-3 text-gray-700 whitespace-nowrap">
+                    <td className="px-3 py-6 whitespace-nowrap flex items-center justify-center text-center">
+                      <AiOutlineEdit
+                        className="text-blue-600 cursor-pointer"
+                        onClick={() => navigateToEditPage(provider)}
+                        size={20}
+                      />
                       <AiOutlineDelete
-                        className="text-red-600 cursor-pointer"
+                        className="text-red-600 cursor-pointer ml-2"
                         onClick={() => deleteProvider(provider.id)}
+                        size={20}
                       />
                     </td>
                   </tr>
@@ -274,6 +292,18 @@ export default function Fornecedores() {
                     alt="logo"
                   />
                 )}
+                <button
+                  onClick={() => navigateToEditPage(provider)}
+                  className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
+                >
+                  Adicionar
+                </button>
+                <button
+                  onClick={() => deleteProvider(provider.id)}
+                  className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
+                >
+                  Deletar
+                </button>
               </div>
             ))}
           </div>

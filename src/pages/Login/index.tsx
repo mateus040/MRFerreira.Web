@@ -3,15 +3,18 @@ import { FaCheck } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import LoadingLogin from "../../components/loading-login";
 
 export default function Login() {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
 
     try {
@@ -41,6 +44,8 @@ export default function Login() {
       }
     } catch (error) {
       toast.error("Erro ao fazer login: " + error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -145,9 +150,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="bg-black inline-flex items-center justify-center w-full px-4 py-4 text-base font-semibold text-white transition-all duration-200 border border-transparent rounded-md hover:bg-opacity-95"
+              className="bg-black inline-flex items-center justify-center w-full h-16 text-base font-semibold text-white transition-all duration-200 border border-transparent rounded-md hover:bg-opacity-95"
+              disabled={loading}
             >
-              Entrar
+              {loading ? <LoadingLogin /> : "Entrar"}
             </button>
 
             <Link

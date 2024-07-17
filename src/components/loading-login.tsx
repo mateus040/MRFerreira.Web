@@ -3,10 +3,9 @@ import clsx from "clsx";
 interface Props {
   className?: string;
   centered?: boolean;
-  size?: number;
 }
 
-export default function Loading({ className = "", centered, size = 8 }: Props) {
+export default function LoadingLogin({ className = "", centered }: Props) {
   return (
     <div
       role="status"
@@ -17,7 +16,7 @@ export default function Loading({ className = "", centered, size = 8 }: Props) {
     >
       <svg
         aria-hidden="true"
-        className={`inline w-${size} h-${size} text-gray-200 animate-spin dark:text-slate-500 fill-slate-900`}
+        className={`inline w-8 h-8 text-gray-200 animate-spin dark:text-slate-500 fill-white`}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
