@@ -275,6 +275,10 @@ export default function Fornecedores() {
                   <span className="text-gray-700">{provider.estado}</span>
                 </div>
                 <div className="text-sm">
+                  Complemento:{" "}
+                  <span className="text-gray-700">{provider.complemento}</span>
+                </div>
+                <div className="text-sm">
                   Email: <span className="text-gray-700">{provider.email}</span>
                 </div>
                 <div className="text-sm">
