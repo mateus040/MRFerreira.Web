@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaBars, FaRegUser } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
@@ -11,7 +12,7 @@ export default function HeaderAdmin({ toggleSidebar }: Props) {
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
 
   const handleClick = () => {
-    setOpenDropdown(state => !state);
+    setOpenDropdown((state) => !state);
   };
 
   return (
@@ -24,22 +25,22 @@ export default function HeaderAdmin({ toggleSidebar }: Props) {
         <div className="relative inline-block text-left">
           <button
             type="button"
-            className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
+            className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-900"
             id="menu-button"
             aria-expanded="true"
             aria-haspopup="true"
             onClick={handleClick}
           >
-            <div className="p-1.5 rounded-full ring-1 ring-black ring-opacity-15">
-              <FaRegUser size={25} />
+            <div className="p-1.5">
+              <BsThreeDotsVertical size={20} />
             </div>
-
-            <IoIosArrowDown />
           </button>
 
           <div
             className={`${
-              openDropdown ? "opacity-100 scale-100" : "opacity-0 scale-95 hidden"
+              openDropdown
+                ? "opacity-100 scale-100"
+                : "opacity-0 scale-95 hidden"
             } absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition transform duration-300 ease-out`}
             role="menu"
             aria-orientation="vertical"
