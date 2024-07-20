@@ -34,8 +34,8 @@ export default function Fornecedores() {
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [logos, setLogos] = useState<{ [key: string]: string }>({});
 
-  const navigateToEditPage = (company: FornecedorModel) => {
-    navigate(`/admin/fornecedores/editar/${company.id}`);
+  const navigateToEditPage = (provider: FornecedorModel) => {
+    navigate(`/admin/fornecedores/editar/${provider.id}`);
   };
 
   const fetchProviders = async () => {
@@ -97,7 +97,7 @@ export default function Fornecedores() {
       );
       setProviders(updatedProviders);
 
-      toast.success("Dados deletados com sucesso!");
+      toast.success("Fornecedor deletado com sucesso!");
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast.error("Erro de solicitação:", err.response?.data || err.message);
@@ -300,7 +300,7 @@ export default function Fornecedores() {
                   onClick={() => navigateToEditPage(provider)}
                   className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
                 >
-                  Adicionar
+                  Editar
                 </button>
                 <button
                   onClick={() => deleteProvider(provider.id)}

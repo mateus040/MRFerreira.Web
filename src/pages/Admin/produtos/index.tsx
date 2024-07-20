@@ -1,6 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BreadCrumb, { Page } from "../../../components/breadCrumb";
 import AdminLayout from "../../../components/Layouts/admin";
+import { useAuth } from "../../../context/AuthContext";
+import { useEffect, useState } from "react";
+import ProdutoModel from "../../../interface/models/ProdutoModel";
+import axios from "axios";
+import { getDownloadURL, ref } from "firebase/storage";
+import { firebaseStorage } from "../../../../firebaseConfig";
+import toast from "react-hot-toast";
+import FornecedorModel from "../../../interface/models/FornecedorModel";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import Loading from "../../../components/loading";
 
 export default function Produtos() {
   const breadCrumbHistory: Page[] = [
@@ -14,6 +24,109 @@ export default function Produtos() {
     },
   ];
 
+  const { token } = useAuth();
+
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [products, setProducts] = useState<ProdutoModel[]>([]);
+  const [providers, setProviders] = useState<FornecedorModel[]>([]);
+  const [logos, setLogos] = useState<{ [key: string]: string }>({});
+
+  const navigateToEditPage = (product: ProdutoModel) => {
+    navigate(`/admin/produtos/editar/${product.id}`);
+  };
+
+  const fetchProducts = async () => {
+    setLoading(true);
+
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/products",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const productsData: ProdutoModel[] = response.data.results;
+
+      setProducts(productsData);
+
+      // Get all unique logo paths
+      const logoPaths = productsData
+        .map((product) => product.foto)
+        .filter((logoPath) => logoPath !== null) as string[];
+
+      // Fetch URLs for all logos
+      const logosTemp: { [key: string]: string } = {};
+      await Promise.all(
+        logoPaths.map(async (logoPath) => {
+          try {
+            const logoRef = ref(firebaseStorage, logoPath);
+            const logoUrl = await getDownloadURL(logoRef);
+            logosTemp[logoPath] = logoUrl;
+          } catch (error) {
+            console.error(`Error fetching logo for path ${logoPath}:`, error);
+          }
+        })
+      );
+
+      setLogos(logosTemp);
+    } catch (err) {
+      console.error("Erro ao buscar produtos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProviders = async () => {
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/providers",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const providersData: FornecedorModel[] = response.data.results;
+
+      setProviders(providersData);
+    } catch (err) {
+      console.error("Erro ao buscar fornecedores:", err);
+    }
+  };
+
+  const deleteProduct = async (productId: string) => {
+    try {
+      await axios.delete(
+        `https://mrferreira-api.vercel.app/api/api/products/delete/${productId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const updatedProducts = products.filter(
+        (product) => product.id !== productId
+      );
+      setProducts(updatedProducts);
+
+      toast.success("Produto deletado com sucesso!");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        toast.error("Erro de solicitação:", err.response?.data || err.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchProviders();
+  }, []);
+
   return (
     <AdminLayout>
       <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between mb-3">
@@ -26,190 +139,170 @@ export default function Produtos() {
         </Link>
       </div>
 
-      <div className="overflow-auto rounded-lg shadow hidden md:block">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b-2 border-gray-200">
-            <tr>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Nome
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Descrição
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Empresa
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Comprimento
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Altura
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Profundidade
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Peso Sup.
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Foto
-              </th>
-              <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                Status
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            <tr className="bg-white">
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                Cadeira estofada
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                descrição da cadeira
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                fornecedora
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                2 metros
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                1 metro
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                50cm
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                120KG
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                Foto
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                <span className="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                  Delivered
-                </span>
-              </td>
-            </tr>
-            <tr className="bg-gray-50">
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                Cadeira estofada
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                descrição da cadeira
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                fornecedora
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                2 metros
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                1 metro
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                50cm
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                120KG
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                Foto
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                <span className="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                  Delivered
-                </span>
-              </td>
-            </tr>
-            <tr className="bg-white">
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                Cadeira estofada
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                descrição da cadeira
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                fornecedora
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                2 metros
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                1 metro
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                50cm
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                120KG
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                Foto
-              </td>
-              <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                <span className="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                  Delivered
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      {loading && <Loading centered />}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
-        <div className="bg-white space-y-3 p-4 rounded-lg shadow">
-          <div className="flex items-center space-x-2 text-sm">
-            <div className="text-gray-500">Cadeira estofada</div>
-            <div>
-              fornecedora
-              {/* <span className="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                Delivered
-              </span> */}
-            </div>
+      {!loading && (
+        <>
+          <div className="overflow-auto rounded-lg shadow hidden md:block">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b-2 border-gray-200">
+                <tr>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Nome
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Descrição
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Fornecedor
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Comprimento
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Altura
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Profundidade
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Peso Sup.
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Linha
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Foto
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {products.map((product) => (
+                  <tr className="bg-white" key={product.id}>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.nome}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.descricao}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {
+                        providers.find(
+                          (provider) => provider.id === product.id_provider
+                        )?.nome
+                      }
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.comprimento}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.altura}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.profundidade}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.peso}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.linha}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {logos[product.foto] && (
+                        <img
+                          src={logos[product.foto]}
+                          className="max-w-[50px] max-h-[50px] object-cover"
+                          alt="foto"
+                        />
+                      )}
+                    </td>
+                    <td className="px-3 py-6 whitespace-nowrap flex items-center justify-center text-center">
+                      <AiOutlineEdit
+                        className="text-blue-600 cursor-pointer"
+                        onClick={() => navigateToEditPage(product)}
+                        size={20}
+                      />
+                      <AiOutlineDelete
+                        className="text-red-600 cursor-pointer ml-2"
+                        onClick={() => deleteProduct(product.id)}
+                        size={20}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="text-sm text-gray-700">descrição da cadeira</div>
-          <div className="text-sm font-medium text-black">Compr.: 2 metros</div>
-          <div className="text-sm font-medium text-black">Altura: 1 metro</div>
-          <div className="text-sm font-medium text-black">Profun.: 50cm</div>
-          <div className="text-sm font-medium text-black">Peso Sup.: 120KG</div>
-          <div className="text-sm font-medium text-black">Foto: imagem</div>
-        </div>
-        <div className="bg-white space-y-3 p-4 rounded-lg shadow">
-          <div className="flex items-center space-x-2 text-sm">
-            <div className="text-gray-500">Cadeira estofada</div>
-            <div>
-              fornecedora
-              {/* <span className="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                Delivered
-              </span> */}
-            </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
+            {products.map((product) => (
+              <div
+                className="bg-white space-y-3 p-4 rounded-lg shadow"
+                key={product.id}
+              >
+                <div className="flex items-center space-x-2 text-sm">
+                  <span>Nome:</span>
+                  <span className="text-gray-500">{product.nome}</span>
+                </div>
+                <div className="text-sm">
+                  Descrição:{" "}
+                  <span className="text-gray-700">{product.descricao}</span>
+                </div>
+                <div className="text-sm">
+                  Fornecedor:{" "}
+                  <span className="text-gray-700">
+                    {
+                      providers.find(
+                        (provider) => provider.id === product.id_provider
+                      )?.nome
+                    }
+                  </span>
+                </div>
+                <div className="text-sm">
+                  Comprimento:{" "}
+                  <span className="text-gray-700">{product.comprimento}</span>
+                </div>
+                <div className="text-sm">
+                  Altura:{" "}
+                  <span className="text-gray-700">{product.altura}</span>
+                </div>
+                <div className="text-sm">
+                  Profundidade:{" "}
+                  <span className="text-gray-700">{product.profundidade}</span>
+                </div>
+                <div className="text-sm">
+                  Peso: <span className="text-gray-700">{product.peso}</span>
+                </div>
+                <div className="text-sm">
+                  Linha: <span className="text-gray-700">{product.linha}</span>
+                </div>
+                {logos[product.foto] && (
+                  <img
+                    src={logos[product.foto]}
+                    className="object-cover"
+                    alt="foto"
+                  />
+                )}
+                <button
+                  onClick={() => navigateToEditPage(product)}
+                  className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => deleteProduct(product.id)}
+                  className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
+                >
+                  Deletar
+                </button>
+              </div>
+            ))}
           </div>
-          <div className="text-sm text-gray-700">descrição da cadeira</div>
-          <div className="text-sm font-medium text-black">Compr.: 2 metros</div>
-          <div className="text-sm font-medium text-black">Altura: 1 metro</div>
-          <div className="text-sm font-medium text-black">Profun.: 50cm</div>
-          <div className="text-sm font-medium text-black">Peso Sup.: 120KG</div>
-          <div className="text-sm font-medium text-black">Foto: imagem</div>
-        </div>
-        <div className="bg-white space-y-3 p-4 rounded-lg shadow">
-          <div className="flex items-center space-x-2 text-sm">
-            <div className="text-gray-500">Cadeira estofada</div>
-            <div>
-              fornecedora
-              {/* <span className="p-1.5 text-xs font-medium uppercase tracking-wider text-green-800 bg-green-200 rounded-lg bg-opacity-50">
-                Delivered
-              </span> */}
-            </div>
-          </div>
-          <div className="text-sm text-gray-700">descrição da cadeira</div>
-          <div className="text-sm font-medium text-black">Compr.: 2 metros</div>
-          <div className="text-sm font-medium text-black">Altura: 1 metro</div>
-          <div className="text-sm font-medium text-black">Profun.: 50cm</div>
-          <div className="text-sm font-medium text-black">Peso Sup.: 120KG</div>
-          <div className="text-sm font-medium text-black">Foto: imagem</div>
-        </div>
-      </div>
+        </>
+      )}
     </AdminLayout>
   );
 }

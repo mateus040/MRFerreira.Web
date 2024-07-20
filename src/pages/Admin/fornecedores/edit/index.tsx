@@ -361,8 +361,9 @@ export default function EditarFornecedor() {
               <label className="block mb-2 font-medium">Logo</label>
               <input
                 type="file"
-                accept=".png, .jpg, .jpeg"
+                accept="image/*"
                 id="logo"
+                name="logo"
                 onChange={handleLogoChange}
                 className="w-full p-2 rounded-lg border border-gray-300"
               />

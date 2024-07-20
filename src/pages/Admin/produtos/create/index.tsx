@@ -194,6 +194,7 @@ export default function AdicionarProdutos() {
             <input
               type="text"
               id="comprimento"
+              name="comprimento"
               placeholder="Informe o comprimento"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProvidersFieldHandler(e)}
@@ -205,6 +206,7 @@ export default function AdicionarProdutos() {
             <input
               type="text"
               id="altura"
+              name="altura"
               placeholder="Informe a altura"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProvidersFieldHandler(e)}
@@ -216,6 +218,7 @@ export default function AdicionarProdutos() {
             <input
               type="text"
               id="profundidade"
+              name="profundidade"
               placeholder="Informe a profundidade"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProvidersFieldHandler(e)}
@@ -227,6 +230,7 @@ export default function AdicionarProdutos() {
             <input
               type="text"
               id="peso"
+              name="peso"
               placeholder="Informe o peso suportado"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProvidersFieldHandler(e)}
@@ -238,6 +242,7 @@ export default function AdicionarProdutos() {
             <input
               type="text"
               id="linha"
+              name="linha"
               placeholder="Informe a linha do produto"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProvidersFieldHandler(e)}
@@ -249,6 +254,7 @@ export default function AdicionarProdutos() {
             <input
               type="file"
               id="foto"
+              name="foto"
               accept="image/*"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => handleLogoChange(e)}

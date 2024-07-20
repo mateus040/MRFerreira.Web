@@ -15,6 +15,7 @@ import ProductsByProvider from "../pages/ProductsByProvider";
 import ByProduct from "../pages/ByProduct";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import EditarFornecedor from "../pages/Admin/fornecedores/edit";
+import EditarProduto from "../pages/Admin/produtos/edit";
 
 interface PrivateRouteProps {
   element: React.ReactElement;
@@ -61,6 +62,10 @@ export default function AppRouter() {
           <Route
             path="/admin/produtos/adicionar"
             element={<AdicionarProdutos />}
+          />
+          <Route
+            path="/admin/produtos/editar/:productId"
+            element={<EditarProduto />}
           />
         </Routes>
       </AuthProvider>
