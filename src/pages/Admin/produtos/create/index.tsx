@@ -211,7 +211,7 @@ export default function AdicionarProdutos() {
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Comprimento</label>
             <input
-              type="text"
+              type="number"
               id="comprimento"
               name="comprimento"
               placeholder="Informe o comprimento"
@@ -223,7 +223,7 @@ export default function AdicionarProdutos() {
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Altura</label>
             <input
-              type="text"
+              type="number"
               id="altura"
               name="altura"
               placeholder="Informe a altura"
@@ -235,7 +235,7 @@ export default function AdicionarProdutos() {
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Profundidade</label>
             <input
-              type="text"
+              type="number"
               id="profundidade"
               name="profundidade"
               placeholder="Informe a profundidade"
@@ -247,7 +247,7 @@ export default function AdicionarProdutos() {
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Peso suportado</label>
             <input
-              type="text"
+              type="number"
               id="peso"
               name="peso"
               placeholder="Informe o peso suportado"
