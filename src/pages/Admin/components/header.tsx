@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaBars, FaRegUser } from "react-icons/fa6";
-import { IoIosArrowDown } from "react-icons/io";
+import { FaBars } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 interface Props {
