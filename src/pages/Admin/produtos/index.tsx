@@ -4,7 +4,7 @@ import AdminLayout from "../../../components/Layouts/admin";
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect, useState } from "react";
 import ProdutoModel from "../../../interface/models/ProdutoModel";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { getDownloadURL, ref } from "firebase/storage";
 import { firebaseStorage } from "../../../../firebaseConfig";
 import toast from "react-hot-toast";
@@ -29,6 +29,7 @@ export default function Produtos() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [products, setProducts] = useState<ProdutoModel[]>([]);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [logos, setLogos] = useState<{ [key: string]: string }>({});
@@ -99,27 +100,52 @@ export default function Produtos() {
   };
 
   const deleteProduct = async (productId: string) => {
-    try {
-      await axios.delete(
-        `https://mrferreira-api.vercel.app/api/api/products/delete/${productId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    setLoadingDelete(true);
 
-      const updatedProducts = products.filter(
-        (product) => product.id !== productId
-      );
-      setProducts(updatedProducts);
-
-      toast.success("Produto deletado com sucesso!");
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error("Erro de solicitação:", err.response?.data || err.message);
+    toast.promise(
+      new Promise((resolve, reject) => {
+        axios
+          .delete(
+            `https://mrferreira-api.vercel.app/api/api/products/delete/${productId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response: AxiosResponse) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+          .finally(() => {
+            setLoadingDelete(false);
+          });
+      }),
+      {
+        loading: "Excluindo produto...",
+        success: () => {
+          const updatedProducts = products.filter(
+            (product) => product.id !== productId
+          );
+          setProducts(updatedProducts);
+          fetchProducts();
+          return "Produto excluído com sucesso!";
+        },
+        error: (error) => {
+          if (axios.isAxiosError(error)) {
+            return (
+              "Erro de solicitação: " + (error.response?.data || error.message)
+            );
+          } else if (error instanceof Error) {
+            return "Erro desconhecido: " + error.message;
+          } else {
+            return "Erro inesperado: " + error;
+          }
+        },
       }
-    }
+    );
   };
 
   useEffect(() => {
@@ -225,11 +251,13 @@ export default function Produtos() {
                         onClick={() => navigateToEditPage(product)}
                         size={20}
                       />
-                      <AiOutlineDelete
-                        className="text-red-600 cursor-pointer ml-2"
-                        onClick={() => deleteProduct(product.id)}
-                        size={20}
-                      />
+                      <button disabled={loadingDelete}>
+                        <AiOutlineDelete
+                          className="text-red-600 cursor-pointer ml-2"
+                          onClick={() => deleteProduct(product.id)}
+                          size={20}
+                        />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -295,6 +323,7 @@ export default function Produtos() {
                 <button
                   onClick={() => deleteProduct(product.id)}
                   className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
+                  disabled={loadingDelete}
                 >
                   Deletar
                 </button>
@@ -302,6 +331,12 @@ export default function Produtos() {
             ))}
           </div>
         </>
+      )}
+
+      {!loading && products.length === 0 && (
+        <div className="text-center text-gray-500 mt-5">
+          Nenhum produto encontrado
+        </div>
       )}
     </AdminLayout>
   );

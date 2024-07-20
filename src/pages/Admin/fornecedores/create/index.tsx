@@ -3,7 +3,7 @@ import Inputmask from "react-input-mask";
 import BreadCrumb, { Page } from "../../../../components/breadCrumb";
 import { useAuth } from "../../../../context/AuthContext";
 import { ChangeEvent, useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +44,7 @@ export default function AdicionarFornecedores() {
 
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [providerField, setProviderField] = useState<ProviderField>({
     nome: "",
     cnpj: "",
@@ -62,7 +63,9 @@ export default function AdicionarFornecedores() {
 
   const { setValue } = useForm();
 
-  const changeProvidersFieldHandler = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const changeProvidersFieldHandler = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setProviderField({
       ...providerField,
       [e.target.name]: e.target.value,
@@ -83,47 +86,65 @@ export default function AdicionarFornecedores() {
   ) => {
     e.preventDefault();
 
-    try {
-      const formData = new FormData();
-      formData.append("nome", providerField.nome);
-      formData.append("cnpj", providerField.cnpj);
-      formData.append("rua", providerField.rua);
-      formData.append("bairro", providerField.bairro);
-      formData.append("numero", providerField.numero);
-      formData.append("cep", providerField.cep);
-      formData.append("cidade", providerField.cidade);
-      formData.append("estado", providerField.estado);
-      formData.append("complemento", providerField.complemento);
-      formData.append("email", providerField.email);
-      formData.append("telefone", providerField.telefone);
-      formData.append("celular", providerField.celular);
-      formData.append("logo", providerField.logo);
+    setLoading(true);
 
-      await axios.post(
-        "https://mrferreira-api.vercel.app/api/api/providers/add",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      toast.success("Fornecedor criado com sucesso!");
-      navigate("/admin/fornecedores");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error("Erro de solicitação:", err.response?.data || err.message);
-        toast.error(
-          "Erro ao enviar solicitação: " +
-            (err.response?.data?.message || err.message)
-        );
-      } else if (err instanceof Error) {
-        toast.error("Erro desconhecido: " + err.message);
-      } else {
-        toast.error("Erro inesperado: " + err);
+    const formData = new FormData();
+    formData.append("nome", providerField.nome);
+    formData.append("cnpj", providerField.cnpj);
+    formData.append("rua", providerField.rua);
+    formData.append("bairro", providerField.bairro);
+    formData.append("numero", providerField.numero);
+    formData.append("cep", providerField.cep);
+    formData.append("cidade", providerField.cidade);
+    formData.append("estado", providerField.estado);
+    formData.append("complemento", providerField.complemento);
+    formData.append("email", providerField.email);
+    formData.append("telefone", providerField.telefone);
+    formData.append("celular", providerField.celular);
+    formData.append("logo", providerField.logo);
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        axios
+          .post(
+            "https://mrferreira-api.vercel.app/api/api/providers/add",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response: AxiosResponse) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }),
+      {
+        loading: "Cadastrando fornecedor...",
+        success: () => {
+          navigate("/admin/fornecedores");
+          return "Fornecedor criado com sucesso!";
+        },
+        error: (error) => {
+          if (axios.isAxiosError(error)) {
+            return (
+              "Erro de solicitação: " + (error.response?.data || error.message)
+            );
+          } else if (error instanceof Error) {
+            return "Erro desconhecido: " + error.message;
+          } else {
+            return "Erro inesperado: " + error;
+          }
+        },
       }
-    }
+    );
   };
 
   useEffect(() => {
@@ -355,6 +376,7 @@ export default function AdicionarFornecedores() {
             type="submit"
             onClick={(e) => onSubmitChange(e)}
             className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all"
+            disabled={loading}
           >
             Cadastrar
           </button>

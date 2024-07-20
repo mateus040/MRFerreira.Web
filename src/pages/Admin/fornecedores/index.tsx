@@ -3,7 +3,7 @@ import AdminLayout from "../../../components/Layouts/admin";
 import BreadCrumb, { Page } from "../../../components/breadCrumb";
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   firebaseStorage,
   ref,
@@ -31,6 +31,7 @@ export default function Fornecedores() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [logos, setLogos] = useState<{ [key: string]: string }>({});
 
@@ -82,27 +83,52 @@ export default function Fornecedores() {
   };
 
   const deleteProvider = async (providerId: string) => {
-    try {
-      await axios.delete(
-        `https://mrferreira-api.vercel.app/api/api/providers/delete/${providerId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    setLoadingDelete(true);
 
-      const updatedProviders = providers.filter(
-        (provider) => provider.id !== providerId
-      );
-      setProviders(updatedProviders);
-
-      toast.success("Fornecedor deletado com sucesso!");
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error("Erro de solicitação:", err.response?.data || err.message);
+    toast.promise(
+      new Promise((resolve, reject) => {
+        axios
+          .delete(
+            `https://mrferreira-api.vercel.app/api/api/providers/delete/${providerId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response: AxiosResponse) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+          .finally(() => {
+            setLoadingDelete(false);
+          });
+      }),
+      {
+        loading: "Excluindo fornecedor...",
+        success: () => {
+          const updatedProviders = providers.filter(
+            (provider) => provider.id !== providerId
+          );
+          setProviders(updatedProviders);
+          fetchProviders();
+          return "Fornecedor excluído com sucesso!";
+        },
+        error: (error) => {
+          if (axios.isAxiosError(error)) {
+            return (
+              "Erro de solicitação: " + (error.response?.data || error.message)
+            );
+          } else if (error instanceof Error) {
+            return "Erro desconhecido: " + error.message;
+          } else {
+            return "Erro inesperado: " + error;
+          }
+        },
       }
-    }
+    );
   };
 
   useEffect(() => {
@@ -227,11 +253,13 @@ export default function Fornecedores() {
                         onClick={() => navigateToEditPage(provider)}
                         size={20}
                       />
-                      <AiOutlineDelete
-                        className="text-red-600 cursor-pointer ml-2"
-                        onClick={() => deleteProvider(provider.id)}
-                        size={20}
-                      />
+                      <button disabled={loadingDelete}>
+                        <AiOutlineDelete
+                          className="text-red-600 cursor-pointer ml-2"
+                          onClick={() => deleteProvider(provider.id)}
+                          size={20}
+                        />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -305,6 +333,7 @@ export default function Fornecedores() {
                 <button
                   onClick={() => deleteProvider(provider.id)}
                   className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all text-center mt-3 lg:mt-0 mb-2 lg:mb-0 w-full lg:w-[200px]"
+                  disabled={loadingDelete}
                 >
                   Deletar
                 </button>
@@ -312,6 +341,10 @@ export default function Fornecedores() {
             ))}
           </div>
         </>
+      )}
+
+      {!loading && providers.length === 0 && (
+        <div className="text-center text-gray-500 mt-5">Nenhum fornecedor encontrado</div>
       )}
     </AdminLayout>
   );

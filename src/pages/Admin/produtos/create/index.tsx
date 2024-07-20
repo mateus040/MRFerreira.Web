@@ -3,7 +3,7 @@ import AdminLayout from "../../../../components/Layouts/admin";
 import BreadCrumb, { Page } from "../../../../components/breadCrumb";
 import { useAuth } from "../../../../context/AuthContext";
 import { ChangeEvent, useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import FornecedorModel from "../../../../interface/models/FornecedorModel";
 
@@ -40,6 +40,7 @@ export default function AdicionarProdutos() {
 
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState<boolean>(false);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
 
   const [productField, setProductField] = useState<ProductField>({
@@ -96,44 +97,62 @@ export default function AdicionarProdutos() {
   ) => {
     e.preventDefault();
 
-    try {
-      const formData = new FormData();
-      formData.append("nome", productField.nome);
-      formData.append("descricao", productField.descricao);
-      formData.append("comprimento", productField.comprimento.toString());
-      formData.append("altura", productField.altura.toString());
-      formData.append("profundidade", productField.profundidade.toString());
-      formData.append("peso", productField.peso.toString());
-      formData.append("linha", productField.linha);
-      formData.append("materiais", productField.materiais);
-      formData.append("foto", productField.foto);
-      formData.append("id_provider", productField.id_provider);
+    setLoading(true);
 
-      await axios.post(
-        "https://mrferreira-api.vercel.app/api/api/products/add",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      toast.success("Produto criado com sucesso!");
-      navigate("/admin/produtos");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        toast.error("Erro de solicitação:", err.response?.data || err.message);
-        toast.error(
-          "Erro ao enviar solicitação: " +
-            (err.response?.data?.message || err.message)
-        );
-      } else if (err instanceof Error) {
-        toast.error("Erro desconhecido: " + err.message);
-      } else {
-        toast.error("Erro inesperado: " + err);
+    const formData = new FormData();
+    formData.append("nome", productField.nome);
+    formData.append("descricao", productField.descricao);
+    formData.append("comprimento", productField.comprimento.toString());
+    formData.append("altura", productField.altura.toString());
+    formData.append("profundidade", productField.profundidade.toString());
+    formData.append("peso", productField.peso.toString());
+    formData.append("linha", productField.linha);
+    formData.append("materiais", productField.materiais);
+    formData.append("foto", productField.foto);
+    formData.append("id_provider", productField.id_provider);
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        axios
+          .post(
+            "https://mrferreira-api.vercel.app/api/api/products/add",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response: AxiosResponse) => {
+            resolve(response.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }),
+      {
+        loading: "Cadastrando produto...",
+        success: () => {
+          navigate("/admin/produtos");
+          return "Produto criado com sucesso!";
+        },
+        error: (error) => {
+          if (axios.isAxiosError(error)) {
+            return (
+              "Erro de solicitação: " + (error.response?.data || error.message)
+            );
+          } else if (error instanceof Error) {
+            return "Erro desconhecido: " + error.message;
+          } else {
+            return "Erro inesperado: " + error;
+          }
+        },
       }
-    }
+    );
   };
 
   useEffect(() => {
@@ -267,6 +286,7 @@ export default function AdicionarProdutos() {
             type="submit"
             onClick={(e) => onSubmitChange(e)}
             className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all"
+            disabled={loading}
           >
             Cadastrar
           </button>
