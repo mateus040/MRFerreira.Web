@@ -109,7 +109,7 @@ export default function AdicionarFornecedores() {
           },
         }
       );
-      toast.success("Dados registrados com sucesso!");
+      toast.success("Fornecedor criado com sucesso!");
       navigate("/admin/fornecedores");
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
