@@ -84,7 +84,7 @@ export default function EditarFornecedor() {
     }
   };
 
-  const changeProvidersFieldHandler = (e: ChangeEvent<HTMLInputElement>) => {
+  const changeProvidersFieldHandler = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     // Verifica se o valor é null ou undefined e define como string vazia
     const sanitizedValue = value === null || value === undefined ? "" : value;
@@ -284,17 +284,47 @@ export default function EditarFornecedor() {
             </div>
             <div className="col-span-12 lg:col-span-1">
               <label className="block mb-2 font-medium">Estado*</label>
-              <input
-                type="text"
+              <select
                 id="estado"
-                placeholder="UF"
+                name="estado"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
                 value={
                   providerData && providerData.estado ? providerData.estado : ""
                 }
+                onChange={(e) => changeProvidersFieldHandler(e)}
                 required
-              />
+              >
+                <option value="" disabled selected>
+                  UF
+                </option>
+                <option value="AC">AC</option>
+                <option value="AL">AL</option>
+                <option value="AP">AP</option>
+                <option value="AM">AM</option>
+                <option value="BA">BA</option>
+                <option value="CE">CE</option>
+                <option value="DF">DF</option>
+                <option value="ES">ES</option>
+                <option value="GO">GO</option>
+                <option value="MA">MA</option>
+                <option value="MT">MT</option>
+                <option value="MS">MS</option>
+                <option value="MG">MG</option>
+                <option value="PA">PA</option>
+                <option value="PB">PB</option>
+                <option value="PR">PR</option>
+                <option value="PE">PE</option>
+                <option value="PI">PI</option>
+                <option value="RJ">RJ</option>
+                <option value="RN">RN</option>
+                <option value="RS">RS</option>
+                <option value="RO">RO</option>
+                <option value="RR">RR</option>
+                <option value="SC">SC</option>
+                <option value="SP">SP</option>
+                <option value="SE">SE</option>
+                <option value="TO">TO</option>
+              </select>
             </div>
             <div className="col-span-12">
               <label className="block mb-2 font-medium">Complemento</label>
