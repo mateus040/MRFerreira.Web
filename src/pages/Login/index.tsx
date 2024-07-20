@@ -32,7 +32,7 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
         login(data.token);
-        navigate("/admin");
+        navigate("/admin/produtos");
         toast.success("Bem-vindo!");
       } else {
         const errorData = await response.json();

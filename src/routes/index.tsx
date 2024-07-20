@@ -24,7 +24,11 @@ interface PrivateRouteProps {
 const PrivateRoute = ({ element }: PrivateRouteProps) => {
   const { token } = useAuth();
 
-  return token ? element : <Navigate to="/" />;
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  return element;
 };
 
 export default function AppRouter() {
@@ -47,25 +51,40 @@ export default function AppRouter() {
           />
 
           {/* Private Routes */}
-          <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
-          <Route path="/admin/fornecedores" element={<Fornecedores />} />
+          <Route
+            path="/admin"
+            element={<PrivateRoute element={<Admin />}></PrivateRoute>}
+          />
+          <Route
+            path="/admin/fornecedores"
+            element={<PrivateRoute element={<Fornecedores />}></PrivateRoute>}
+          />
           <Route
             path="/admin/fornecedores/adicionar"
-            element={<AdicionarFornecedores />}
+            element={
+              <PrivateRoute element={<AdicionarFornecedores />}></PrivateRoute>
+            }
           />
           <Route
             path="/admin/fornecedores/editar/:providerId"
-            element={<EditarFornecedor />}
+            element={
+              <PrivateRoute element={<EditarFornecedor />}></PrivateRoute>
+            }
           />
 
-          <Route path="/admin/produtos" element={<Produtos />} />
+          <Route
+            path="/admin/produtos"
+            element={<PrivateRoute element={<Produtos />}></PrivateRoute>}
+          />
           <Route
             path="/admin/produtos/adicionar"
-            element={<AdicionarProdutos />}
+            element={
+              <PrivateRoute element={<AdicionarProdutos />}></PrivateRoute>
+            }
           />
           <Route
             path="/admin/produtos/editar/:productId"
-            element={<EditarProduto />}
+            element={<PrivateRoute element={<EditarProduto />}></PrivateRoute>}
           />
         </Routes>
       </AuthProvider>

@@ -1,14 +1,26 @@
+import toast from "react-hot-toast";
 import { BiHome } from "react-icons/bi";
 import { BsBoxSeam } from "react-icons/bs";
 import { FaCartFlatbed } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
   isSidebarOpen: boolean;
 }
 
 export default function SidebarAdmin({ isSidebarOpen }: Props) {
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
+    toast.success("Deslogado com sucesso!");
+  };
+
   return (
     <div
       className={`transition-all duration-300 ${
@@ -19,48 +31,62 @@ export default function SidebarAdmin({ isSidebarOpen }: Props) {
         <div className="p-4 pb-2 flex items-center justify-center lg:justify-start">
           <img src="/images/logo-branco.png" className="w-20 h-20 rounded-md" />
           <p className="hidden lg:flex mx-2 font-semibold text-slate-400">
-            Painel Admin
+            <span className={`${isSidebarOpen ? "hidden" : "block"}`}>Painel Admin</span>
           </p>
         </div>
         <ul className="flex-1 p-4 lg:p-2">
-          <li className="flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white mb-2 text-slate-400">
+          <li
+            className={`flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
+              isActive("/")
+                ? `${!isSidebarOpen ? "bg-slate-600 text-white" : ""}`
+                : "hover:bg-slate-600 hover:text-white text-slate-400"
+            } mb-2`}
+          >
             <Link
               to="/"
               className="flex items-center overflow-hidden transition-all"
             >
               <BiHome size={25} className="lg:-mt-1" />
-
               <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
                 Início
               </span>
             </Link>
           </li>
-          <li className="flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white mb-2 text-slate-400">
+          <li
+            className={`flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
+              isActive("/admin/fornecedores")
+                ? `${!isSidebarOpen ? "bg-slate-600 text-white" : ""}`
+                : "hover:bg-slate-600 hover:text-white text-slate-400"
+            } mb-2`}
+          >
             <Link
               to="/admin/fornecedores"
               className="flex items-center overflow-hidden transition-all"
             >
               <FaCartFlatbed size={25} className="lg:-mt-1" />
-
               <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
                 Fornecedores
               </span>
             </Link>
           </li>
-          <li className="flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white text-slate-400">
+          <li
+            className={`flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
+              isActive("/admin/produtos")
+                ? `${!isSidebarOpen ? "bg-slate-600 text-white" : ""}`
+                : "hover:bg-slate-600 hover:text-white text-slate-400"
+            }`}
+          >
             <Link
               to="/admin/produtos"
               className="flex items-center overflow-hidden transition-all"
             >
               <BsBoxSeam size={25} className="lg:-mt-1" />
-
               <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
                 Produtos
               </span>
             </Link>
           </li>
         </ul>
-
         <div className="border-t flex p-4">
           <div className="flex justify-center lg:justify-between items-center overflow-hidden w-52">
             <div className="flex justify-between items-center overflow-hidden transition-all">
@@ -69,7 +95,10 @@ export default function SidebarAdmin({ isSidebarOpen }: Props) {
                 <span className="text-xs">Representações</span>
               </div>
             </div>
-            <div className="cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white py-3 px-4 rounded-md text-slate-400">
+            <div
+              className="cursor-pointer transition-colors group hover:bg-slate-600 hover:text-white py-3 px-4 rounded-md text-slate-400"
+              onClick={logout}
+            >
               <MdLogout size={25} />
             </div>
           </div>

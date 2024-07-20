@@ -3,7 +3,6 @@ import { ReactNode, createContext, useContext, useState } from "react";
 interface AuthContextType {
   token: string | null;
   login: (newToken: string) => void;
-  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,13 +21,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.setItem("token", newToken);
   };
 
-  const logout = () => {
-    setToken(null);
-    localStorage.removeItem("token");
-  };
-
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login }}>
       {children}
     </AuthContext.Provider>
   );
