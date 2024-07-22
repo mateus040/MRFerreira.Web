@@ -7,10 +7,10 @@ import FornecedorModel from "../../../interface/models/FornecedorModel";
 interface Props {
   providers: FornecedorModel[];
   logos: { [key: string]: string };
-  loading: boolean;
+  //loading: boolean;
 }
 
-export default function Empresas({ providers, logos, loading }: Props) {
+export default function Empresas({ providers, logos }: Props) {
   const formatNameForURL = (name: string) =>
     name
       .toLowerCase()

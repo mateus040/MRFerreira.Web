@@ -124,13 +124,13 @@ export default function Main() {
           products={products}
           providers={providers}
           fotos={fotos}
-          loading={loadingProducts}
+          //loading={loadingProducts}
         />
 
         <Empresas
           providers={providers}
           logos={logos}
-          loading={loadingProviders}
+          //loading={loadingProviders}
         />
 
         <Sobre />

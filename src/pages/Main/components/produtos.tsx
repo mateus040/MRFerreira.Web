@@ -9,14 +9,13 @@ interface Props {
   products: ProdutoModel[];
   providers: FornecedorModel[];
   fotos: { [key: string]: string };
-  loading: boolean;
+  //loading: boolean;
 }
 
 export default function Produtos({
   products,
   providers,
   fotos,
-  loading,
 }: Props) {
   // Função para formatar nomes para uma URL válida
   const formatNameForURL = (name: string) =>
