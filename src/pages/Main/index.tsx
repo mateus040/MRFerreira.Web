@@ -15,8 +15,8 @@ import axios from "axios";
 export default function Main() {
   const { token } = useAuth();
 
-  const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
-  const [loadingProviders, setLoadingProviders] = useState<boolean>(false);
+  // const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
+  // const [loadingProviders, setLoadingProviders] = useState<boolean>(false);
 
   const [products, setProducts] = useState<ProdutoModel[]>([]);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
@@ -25,7 +25,7 @@ export default function Main() {
   const [fotos, setFotos] = useState<{ [key: string]: string }>({});
 
   const fetchProducts = async () => {
-    setLoadingProducts(true);
+    //setLoadingProducts(true);
 
     try {
       const response = await axios.get(
@@ -63,12 +63,12 @@ export default function Main() {
     } catch (err) {
       console.error("Erro ao buscar produtos:", err);
     } finally {
-      setLoadingProducts(false);
+      //setLoadingProducts(false);
     }
   };
 
   const fetchProviders = async () => {
-    setLoadingProviders(true);
+    //setLoadingProviders(true);
 
     try {
       const response = await axios.get(
@@ -106,7 +106,7 @@ export default function Main() {
     } catch (err) {
       console.error("Erro ao buscar fornecedores:", err);
     } finally {
-      setLoadingProviders(false);
+      //setLoadingProviders(false);
     }
   };
 
