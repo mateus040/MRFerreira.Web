@@ -2,8 +2,45 @@ import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
+import ProdutoModel from "../../../interface/models/ProdutoModel";
+import FornecedorModel from "../../../interface/models/FornecedorModel";
 
-export default function Produtos() {
+interface Props {
+  products: ProdutoModel[];
+  providers: FornecedorModel[];
+  fotos: { [key: string]: string };
+  loading: boolean;
+}
+
+export default function Produtos({
+  products,
+  providers,
+  fotos,
+  loading,
+}: Props) {
+  // Função para formatar nomes para uma URL válida
+  const formatNameForURL = (name: string) =>
+    name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+
+  // Processando os produtos para incluir os dados do fornecedor e URLs formatadas
+  const processedProducts = products.slice(0, 5).map((product) => {
+    const provider = providers.find(
+      (provider) => provider.id === product.id_provider
+    );
+    const providerNameURL = provider ? formatNameForURL(provider.nome) : "";
+    const productNameURL = formatNameForURL(product.nome);
+
+    return {
+      ...product,
+      providerName: provider?.nome,
+      providerNameURL,
+      productNameURL,
+    };
+  });
+
   return (
     <div className="px-8 lg:px-20 py-12 container mx-auto" id="produtos">
       <div className="flex flex-col items-center justify-center">
@@ -18,7 +55,7 @@ export default function Produtos() {
         <Swiper
           className="product-slider"
           spaceBetween={30}
-          loop={true}
+          loop={false}
           autoplay={{ delay: 7500, disableOnInteraction: false }}
           initialSlide={0}
           breakpoints={{
@@ -33,66 +70,35 @@ export default function Produtos() {
             },
           }}
         >
-          <SwiperSlide>
-            <div className="product-slider bg-white px-20 py-16 rounded-lg ">
-              <div className="flex flex-col items-center justify-center">
-                <div className="hover:scale-105 transition-transform cursor-pointer">
-                  <img src="/images/cadeira.jpg" className="h-52 object-contain" />
-                </div>
+          {processedProducts.map((product) => (
+            <SwiperSlide key={product.id}>
+              <div className="product-slider bg-white px-20 py-16 rounded-lg">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="hover:scale-105 transition-transform cursor-pointer">
+                    {fotos[product.foto] && (
+                      <img
+                        src={fotos[product.foto]}
+                        className="h-52 object-contain"
+                      />
+                    )}
+                  </div>
 
-                <p className="mt-8 text-xl font-semibold text-center">
-                  Cadeira de escritório
-                </p>
-                <p className="mt-3 text-md text-center">Empresa</p>
-                <Link
-                  to="/fornecedor/:providerId"
-                  className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
-                >
-                  Ver no catálogo
-                </Link>
-              </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="product-slider bg-white px-20 py-16 rounded-lg ">
-              <div className="flex flex-col items-center justify-center">
-                <div className="hover:scale-105 transition-transform cursor-pointer">
-                  <img src="/images/cadeira.jpg" className="h-52 object-contain" />
+                  <p className="mt-8 text-xl font-semibold text-center">
+                    {product.nome}
+                  </p>
+                  <p className="mt-3 text-md text-center">
+                    {product.providerName}
+                  </p>
+                  <Link
+                    to={`/fornecedor/${product.providerNameURL}/${product.productNameURL}`}
+                    className="flex items-center justify-center w-[230px] mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
+                  >
+                    Detalhes
+                  </Link>
                 </div>
-
-                <p className="mt-8 text-xl font-semibold text-center">
-                  Cadeira de escritório
-                </p>
-                <p className="mt-3 text-md text-center">Empresa</p>
-                <Link
-                  to="/"
-                  className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
-                >
-                  Ver no catálogo
-                </Link>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide>
-            <div className="product-slider bg-white px-20 py-16 rounded-lg">
-              <div className="flex flex-col items-center justify-center">
-                <div className="hover:scale-105 transition-transform cursor-pointer">
-                  <img src="/images/cadeira.jpg" className="h-52 object-contain" />
-                </div>
-
-                <p className="mt-8 text-xl font-semibold text-center">
-                  Cadeira de escritório
-                </p>
-                <p className="mt-3 text-md text-center">Empresa</p>
-                <Link
-                  to="/"
-                  className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
-                >
-                  Ver no catálogo
-                </Link>
-              </div>
-            </div>
-          </SwiperSlide>
+            </SwiperSlide>
+          ))}
         </Swiper>
       </div>
     </div>
