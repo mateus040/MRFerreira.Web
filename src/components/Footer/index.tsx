@@ -12,8 +12,8 @@ export default function Footer() {
   return (
     <div className="bg-white shadow-lg">
       <div className="px-8 lg:px-24 py-12 container mx-auto">
-        <div className="grid grid-cols-12 gap-10 xl:gap-5 mb-10">
-          <div className="col-span-12 xl:col-span-4">
+        <div className="grid grid-cols-12 xl:gap-16 mb-10">
+          <div className="col-span-12 xl:col-span-4 xl:-ms-10">
             <img src="/images/logo-transparente.png" className="h-[120px]" />
             <p className="text-md text-gray-600 max-w-[350px]">
               Lorem Ipsum Dolor Sit Amet, Adipiscing Elit. Labore, Aspernatur!
@@ -30,7 +30,7 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className="col-span-12 xl:col-span-8">
+          <div className="col-span-12 xl:col-span-8 mt-10 xl:mt-0 -ms-0 md:-lg-10 xl:-ms-0">
             <div className="flex flex-col xl:flex-row items-start justify-between">
               <div className="flex flex-col items-start justify-start mb-5 xl:mb-0">
                 <p className="text-2xl font-semibold mb-5">Contato</p>
