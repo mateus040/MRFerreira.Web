@@ -7,7 +7,7 @@ export default interface ProdutoModel {
   profundidade: number;
   peso: number;
   linha: string;
-  materias: string;
+  materiais: string;
   foto: string;
   id_provider: string;
 }
