@@ -20,7 +20,7 @@ export default function MainLayout({ children }: Props) {
       </div>
 
       {/* Ícone do WhatsApp */}
-      <div className="fixed bottom-8 right-6 w-16 h-16 bg-[#25d366] rounded-full flex items-center justify-center">
+      <div className="fixed bottom-8 right-5 w-16 h-16 bg-[#25d366] rounded-full flex items-center justify-center z-50">
         <Link
           to={`https://api.whatsapp.com/send?phone=5514991896619&text=${encodeURIComponent(
             "Olá, tudo bem? Gostaria de saber mais informações sobre os produtos!"
