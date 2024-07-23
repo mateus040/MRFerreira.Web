@@ -101,6 +101,9 @@ export default function ProductsByProvider() {
   return (
     <MainLayout>
       <div className="px-8 lg:px-12 py-12 container mx-auto">
+        <p className="mt-10 text-2xl sm:text-3xl font-semibold text-center">
+          Catálogo {providerId}
+        </p>
         <form className="mt-8">
           <input
             type="text"
