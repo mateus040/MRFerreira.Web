@@ -12,7 +12,7 @@ export default function NotFound() {
 
       <Link
         to="/"
-        className="mt-8 bg-black hover:bg-gray-950 text-white text-lg py-3 px-6 rounded-xl"
+        className="mt-8 bg-black hover:bg-zinc-950 text-white text-lg py-3 px-6 rounded-xl"
       >
         <span className="text-center">Voltar ao início</span>
       </Link>
