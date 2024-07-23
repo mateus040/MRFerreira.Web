@@ -73,8 +73,8 @@ export default function EditarProduto() {
       );
       setProductData(response.data.products);
     } catch (error) {
-      console.error("Erro ao buscar dados do fornecedor:", error);
-      toast.error("Erro ao buscar dados do fornecedor.");
+      console.error("Erro ao buscar dados do produto:", error);
+      toast.error("Erro ao buscar dados do produto.");
     } finally {
       setLoadingProducts(false);
     }
