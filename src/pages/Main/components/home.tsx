@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Home() {
   return (
     <div id="home">
@@ -13,13 +15,16 @@ export default function Home() {
           <h1 className="uppercase text-2xl sm:text-3xl lg:text-4xl font-bold">
             O conforto que você merece!
           </h1>
-          <p className="mt-5 text-md sm:text-lg text-gray-300">
+          <p className="mt-5 text-md sm:text-lg text-gray-300 mb-10">
             Descubras nossas coleções e adquira peças que não ocupam espaço, mas
             transformam ambientes!
           </p>
-          <button className="mt-8 border-2 border-white rounded px-8 py-2 hover:bg-white hover:text-black transition-all">
+          <Link
+            to="#produtos"
+            className="mt-8 border-2 border-white rounded px-8 py-2 hover:bg-white hover:text-black transition-all"
+          >
             Venha conhecer!
-          </button>
+          </Link>
         </div>
       </div>
     </div>
