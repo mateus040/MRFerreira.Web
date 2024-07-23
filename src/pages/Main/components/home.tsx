@@ -19,12 +19,12 @@ export default function Home() {
             Descubras nossas coleções e adquira peças que não ocupam espaço, mas
             transformam ambientes!
           </p>
-          <Link
-            to="#produtos"
+          <a
+            href="#produtos"
             className="mt-8 border-2 border-white rounded px-8 py-2 hover:bg-white hover:text-black transition-all"
           >
             Venha conhecer!
-          </Link>
+          </a>
         </div>
       </div>
     </div>
