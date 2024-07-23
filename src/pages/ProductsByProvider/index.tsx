@@ -104,6 +104,9 @@ export default function ProductsByProvider() {
         <p className="mt-10 text-2xl sm:text-3xl font-semibold text-center">
           Catálogo {providerId}
         </p>
+        <p className="text-md mt-3 text-gray-600 text-center">
+          Veja todos os produtos de nossa empresa parceira
+        </p>
         <form className="mt-8">
           <input
             type="text"
