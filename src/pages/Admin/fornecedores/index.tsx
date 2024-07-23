@@ -247,7 +247,7 @@ export default function Fornecedores() {
                         />
                       )}
                     </td>
-                    <td className="px-3 py-6 whitespace-nowrap flex items-center justify-center text-center">
+                    <td className="px-3 py-6 whitespace-nowrap flex items-center text-center">
                       <AiOutlineEdit
                         className="text-blue-600 cursor-pointer"
                         onClick={() => navigateToEditPage(provider)}

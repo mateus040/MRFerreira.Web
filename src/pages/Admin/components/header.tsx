@@ -66,6 +66,15 @@ export default function HeaderAdmin({ toggleSidebar }: Props) {
                 Produtos
               </Link>
               <Link
+                to="/admin/categorias"
+                className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
+                role="menuitem"
+                tabIndex={-1}
+                id="menu-item-1"
+              >
+                Categorias
+              </Link>
+              <Link
                 to="/"
                 className="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100"
                 role="menuitem"

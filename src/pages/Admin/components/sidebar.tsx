@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { BiHome } from "react-icons/bi";
+import { BiCategory, BiHome } from "react-icons/bi";
 import { BsBoxSeam } from "react-icons/bs";
 import { FaCartFlatbed } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
@@ -83,6 +83,23 @@ export default function SidebarAdmin({ isSidebarOpen }: Props) {
               <BsBoxSeam size={25} className="lg:-mt-1" />
               <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
                 Produtos
+              </span>
+            </Link>
+          </li>
+          <li
+            className={`flex items-center justify-center py-3 lg:py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group mt-2 ${
+              isActive("/admin/categorias")
+                ? `${!isSidebarOpen ? "bg-slate-600 text-white" : ""}`
+                : "hover:bg-slate-600 hover:text-white text-slate-400"
+            }`}
+          >
+            <Link
+              to="/admin/categorias"
+              className="flex items-center overflow-hidden transition-all"
+            >
+              <BiCategory size={25} className="lg:-mt-1" />
+              <span className="hidden lg:flex overflow-hidden transition-all w-52 ml-3">
+                Categorias
               </span>
             </Link>
           </li>

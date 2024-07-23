@@ -17,6 +17,8 @@ import { AuthProvider, useAuth } from "../context/AuthContext";
 import EditarFornecedor from "../pages/Admin/fornecedores/edit";
 import EditarProduto from "../pages/Admin/produtos/edit";
 import NotFound from "../pages/NotFound";
+import Categorias from "../pages/Admin/categorias";
+import EditarCategoria from "../pages/Admin/categorias/edit";
 
 interface PrivateRouteProps {
   element: React.ReactElement;
@@ -73,6 +75,7 @@ export default function AppRouter() {
             }
           />
 
+
           <Route
             path="/admin/produtos"
             element={<PrivateRoute element={<Produtos />}></PrivateRoute>}
@@ -86,6 +89,19 @@ export default function AppRouter() {
           <Route
             path="/admin/produtos/editar/:productId"
             element={<PrivateRoute element={<EditarProduto />}></PrivateRoute>}
+          />
+
+
+          <Route
+            path="/admin/categorias"
+            element={<PrivateRoute element={<Categorias />}></PrivateRoute>}
+          />
+
+          <Route
+            path="/admin/categorias/editar/:categoryId"
+            element={
+              <PrivateRoute element={<EditarCategoria />}></PrivateRoute>
+            }
           />
 
           {/* NotFound */}
