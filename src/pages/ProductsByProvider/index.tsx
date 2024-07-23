@@ -33,7 +33,7 @@ export default function ProductsByProvider() {
                     to="/fornecedor/:providerId/:productId"
                     className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
                   >
-                    Ver item
+                    Detalhes
                   </Link>
                 </div>
               </div>
@@ -55,7 +55,7 @@ export default function ProductsByProvider() {
                     to=""
                     className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
                   >
-                    Ver item
+                    Detalhes
                   </Link>
                 </div>
               </div>
@@ -77,7 +77,7 @@ export default function ProductsByProvider() {
                     to=""
                     className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
                   >
-                    Ver item
+                    Detalhes
                   </Link>
                 </div>
               </div>
