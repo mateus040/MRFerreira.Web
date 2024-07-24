@@ -19,6 +19,7 @@ import EditarProduto from "../pages/Admin/produtos/edit";
 import NotFound from "../pages/NotFound";
 import Categorias from "../pages/Admin/categorias";
 import EditarCategoria from "../pages/Admin/categorias/edit";
+import ProductsByCategory from "../pages/ProductsByCategory";
 
 interface PrivateRouteProps {
   element: React.ReactElement;
@@ -53,6 +54,11 @@ export default function AppRouter() {
             element={<ByProduct />}
           />
 
+          <Route
+            path="/categoria/:categoryId"
+            element={<ProductsByCategory />}
+          />
+
           {/* Private Routes */}
           <Route
             path="/admin"
@@ -75,7 +81,6 @@ export default function AppRouter() {
             }
           />
 
-
           <Route
             path="/admin/produtos"
             element={<PrivateRoute element={<Produtos />}></PrivateRoute>}
@@ -90,7 +95,6 @@ export default function AppRouter() {
             path="/admin/produtos/editar/:productId"
             element={<PrivateRoute element={<EditarProduto />}></PrivateRoute>}
           />
-
 
           <Route
             path="/admin/categorias"
