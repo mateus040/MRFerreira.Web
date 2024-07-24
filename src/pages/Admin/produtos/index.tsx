@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import FornecedorModel from "../../../interface/models/FornecedorModel";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import Loading from "../../../components/loading";
+import CategoriaModel from "../../../interface/models/CategoriaModel";
 
 export default function Produtos() {
   const breadCrumbHistory: Page[] = [
@@ -30,8 +31,11 @@ export default function Produtos() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+
   const [products, setProducts] = useState<ProdutoModel[]>([]);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
+  const [categories, setCategories] = useState<CategoriaModel[]>([]);
+
   const [logos, setLogos] = useState<{ [key: string]: string }>({});
 
   const navigateToEditPage = (product: ProdutoModel) => {
@@ -99,6 +103,24 @@ export default function Produtos() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/categories",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const categoriesData: CategoriaModel[] = response.data.results;
+
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
+    }
+  };
+
   const deleteProduct = async (productId: string) => {
     setLoadingDelete(true);
 
@@ -151,6 +173,7 @@ export default function Produtos() {
   useEffect(() => {
     fetchProducts();
     fetchProviders();
+    fetchCategories();
   }, []);
 
   return (
@@ -178,6 +201,9 @@ export default function Produtos() {
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Descrição
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Categoria
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Fornecedor
@@ -213,6 +239,13 @@ export default function Produtos() {
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                       {product.descricao}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {
+                        categories.find(
+                          (category) => category.id === product.id_category
+                        )?.nome
+                      }
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                       {
@@ -278,6 +311,17 @@ export default function Produtos() {
                 <div className="text-sm">
                   Descrição:{" "}
                   <span className="text-gray-700">{product.descricao}</span>
+                </div>
+                <div className="text-sm">
+                  Categoria:{" "}
+                  <span className="text-gray-700">
+                    {" "}
+                    {
+                      categories.find(
+                        (category) => category.id === product.id_category
+                      )?.nome
+                    }
+                  </span>
                 </div>
                 <div className="text-sm">
                   Fornecedor:{" "}

@@ -6,6 +6,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import toast from "react-hot-toast";
 import FornecedorModel from "../../../../interface/models/FornecedorModel";
+import CategoriaModel from "../../../../interface/models/CategoriaModel";
 
 interface ProductField {
   nome: string;
@@ -18,6 +19,7 @@ interface ProductField {
   materiais: string;
   foto: File | string;
   id_provider: string;
+  id_category: string;
 }
 
 export default function AdicionarProdutos() {
@@ -42,6 +44,7 @@ export default function AdicionarProdutos() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
+  const [categories, setCategories] = useState<CategoriaModel[]>([]);
 
   const [productField, setProductField] = useState<ProductField>({
     nome: "",
@@ -54,9 +57,10 @@ export default function AdicionarProdutos() {
     materiais: "",
     foto: "",
     id_provider: "",
+    id_category: "",
   });
 
-  const changeProvidersFieldHandler = (
+  const changeProductsFieldHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setProductField({
@@ -92,6 +96,24 @@ export default function AdicionarProdutos() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/categories",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const categoriesData: CategoriaModel[] = response.data.results;
+
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
+    }
+  };
+
   const onSubmitChange = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -110,6 +132,7 @@ export default function AdicionarProdutos() {
     formData.append("materiais", productField.materiais);
     formData.append("foto", productField.foto);
     formData.append("id_provider", productField.id_provider);
+    formData.append("id_category", productField.id_category);
 
     toast.promise(
       new Promise((resolve, reject) => {
@@ -157,6 +180,7 @@ export default function AdicionarProdutos() {
 
   useEffect(() => {
     fetchProviders();
+    fetchCategories();
   }, []);
 
   return (
@@ -175,7 +199,7 @@ export default function AdicionarProdutos() {
               name="nome"
               placeholder="Informe o nome do produto"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
           </div>
@@ -185,7 +209,7 @@ export default function AdicionarProdutos() {
               id="id_provider"
               name="id_provider"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             >
               <option value="">Selecione um fornecedor</option>
@@ -196,7 +220,7 @@ export default function AdicionarProdutos() {
               ))}
             </select>
           </div>
-          <div className="col-span-12">
+          <div className="col-span-12 lg:col-span-8">
             <label className="block mb-2 font-medium">Descrição*</label>
             <input
               type="text"
@@ -204,9 +228,26 @@ export default function AdicionarProdutos() {
               name="descricao"
               placeholder="Informe a descrição"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
+          </div>
+          <div className="col-span-12 lg:col-span-4">
+            <label className="block mb-2 font-medium">Categoria*</label>
+            <select
+              id="id_category"
+              name="id_category"
+              className="w-full p-2 rounded-lg border border-gray-300"
+              onChange={(e) => changeProductsFieldHandler(e)}
+              required
+            >
+              <option value="">Selecione uma categoria</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.nome}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Comprimento</label>
@@ -216,7 +257,7 @@ export default function AdicionarProdutos() {
               name="comprimento"
               placeholder="Informe o comprimento"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
           </div>
@@ -228,7 +269,7 @@ export default function AdicionarProdutos() {
               name="altura"
               placeholder="Informe a altura"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
           </div>
@@ -240,7 +281,7 @@ export default function AdicionarProdutos() {
               name="profundidade"
               placeholder="Informe a profundidade"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
           </div>
@@ -252,7 +293,7 @@ export default function AdicionarProdutos() {
               name="peso"
               placeholder="Informe o peso suportado"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
           </div>
@@ -264,7 +305,7 @@ export default function AdicionarProdutos() {
               name="linha"
               placeholder="Informe a linha do produto"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProvidersFieldHandler(e)}
+              onChange={(e) => changeProductsFieldHandler(e)}
               required
             />
           </div>

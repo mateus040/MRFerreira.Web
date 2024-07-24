@@ -10,4 +10,5 @@ export default interface ProdutoModel {
   materiais: string;
   foto: string;
   id_provider: string;
+  id_category: string;
 }
