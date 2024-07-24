@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import CategoriaModel from "../../interface/models/CategoriaModel";
+import { formatNameForURL } from "../../utils/formatNameForURL";
 
 export default function Header() {
   const { token } = useAuth();
@@ -12,6 +13,15 @@ export default function Header() {
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
 
   const [categories, setCategories] = useState<CategoriaModel[]>([]);
+
+  const processedCategories = categories.map((category) => {
+    const categoryNameURL = formatNameForURL(category.nome);
+
+    return {
+      ...category,
+      categoryNameURL,
+    };
+  });
 
   const handleClick = () => {
     setMenuResponsive((state) => !state);
@@ -78,8 +88,8 @@ export default function Header() {
               </span>
               {openDropdown && (
                 <ul className="absolute mt-3 w-48 bg-white border-gray-300 rounded-lg shadow-lg">
-                  {categories.map((category) => (
-                    <Link to={`/categoria/${category.id}`}>
+                  {processedCategories.map((category) => (
+                    <Link to={`/categoria/${category.categoryNameURL}`}>
                       <li className="p-2.5 hover:bg-gray-100 cursor-pointer">
                         {category.nome}
                       </li>

@@ -41,7 +41,7 @@ export default function ProductsByCategory() {
 
     try {
       const response = await axios.get(
-        `https://mrferreira-api.vercel.app/api/api/categories/${query}`,
+        `https://mrferreira-api.vercel.app/api/api/category/${categoryId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
