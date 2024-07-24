@@ -310,7 +310,7 @@ export default function AdicionarProdutos() {
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <label className="block mb-2 font-medium">Foto</label>
+            <label className="block mb-2 font-medium">Foto*</label>
             <input
               type="file"
               id="foto"
