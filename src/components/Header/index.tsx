@@ -1,13 +1,48 @@
 import { FaBars } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+import CategoriaModel from "../../interface/models/CategoriaModel";
 
 export default function Header() {
+  const { token } = useAuth();
+
   const [menuResponsive, setMenuResponsive] = useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+
+  const [categories, setCategories] = useState<CategoriaModel[]>([]);
 
   const handleClick = () => {
     setMenuResponsive((state) => !state);
   };
+
+  const handleOpenDropdown = () => {
+    setOpenDropdown((state) => !state);
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/categories",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const categoriesData: CategoriaModel[] = response.data.results;
+
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-lg">
@@ -33,6 +68,25 @@ export default function Header() {
               <a href="#produtos" className="hover:text-gray-500 font-semibold">
                 Produtos
               </a>
+            </li>
+            <li className="mx-4 lg:mx-0 cursor-pointer">
+              <span
+                className="hover:text-gray-500 font-semibold"
+                onClick={handleOpenDropdown}
+              >
+                Categorias
+              </span>
+              {openDropdown && (
+                <ul className="absolute mt-3 w-48 bg-white border-gray-300 rounded-lg shadow-lg">
+                  {categories.map((category) => (
+                    <Link to={`/categoria/${category.id}`}>
+                      <li className="p-2.5 hover:bg-gray-100 cursor-pointer">
+                        {category.nome}
+                      </li>
+                    </Link>
+                  ))}
+                </ul>
+              )}
             </li>
             <li className="mx-4 lg:mx-0">
               <a href="#empresas" className="hover:text-gray-500 font-semibold">
