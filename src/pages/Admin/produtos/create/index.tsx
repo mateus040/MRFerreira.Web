@@ -258,7 +258,6 @@ export default function AdicionarProdutos() {
               placeholder="Informe os materiais do produto"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProductsFieldHandler(e)}
-              required
             />
           </div>
           <div className="col-span-12 lg:col-span-4">

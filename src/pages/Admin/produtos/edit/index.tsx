@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import AdminLayout from "../../../../components/Layouts/admin";
 import Loading from "../../../../components/loading";
 import FornecedorModel from "../../../../interface/models/FornecedorModel";
+import CategoriaModel from "../../../../interface/models/CategoriaModel";
 
 interface ProductField {
   nome: string;
@@ -19,6 +20,7 @@ interface ProductField {
   materiais: string;
   foto: File | string;
   id_provider: string;
+  id_category: string;
 }
 
 export default function EditarProduto() {
@@ -55,9 +57,11 @@ export default function EditarProduto() {
     materiais: "",
     foto: "",
     id_provider: "",
+    id_category: "",
   });
 
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
+  const [categories, setCategories] = useState<CategoriaModel[]>([]);
 
   const fetchProducts = async () => {
     setLoadingProducts(true);
@@ -98,7 +102,7 @@ export default function EditarProduto() {
     }
   };
 
-  const changeProvidersFieldHandler = (
+  const changeProductsFieldHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { id, value } = e.target;
@@ -116,6 +120,24 @@ export default function EditarProduto() {
         ...productData,
         foto: e.target.files[0],
       });
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/categories",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const categoriesData: CategoriaModel[] = response.data.results;
+
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
     }
   };
 
@@ -137,6 +159,7 @@ export default function EditarProduto() {
     formData.append("linha", productData.linha);
     formData.append("materiais", productData.materiais);
     formData.append("id_provider", productData.id_provider);
+    formData.append("id_category", productData.id_category);
 
     // Verifica se foto é uma instância de File e a adiciona ao FormData
     if (productData.foto instanceof File) {
@@ -193,6 +216,7 @@ export default function EditarProduto() {
 
   useEffect(() => {
     fetchProviders();
+    fetchCategories();
   }, []);
 
   return (
@@ -214,7 +238,7 @@ export default function EditarProduto() {
                 name="nome"
                 placeholder="Informe o nome do produto"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={productData && productData.nome ? productData.nome : ""}
                 required
               />
@@ -225,7 +249,7 @@ export default function EditarProduto() {
                 id="id_provider"
                 name="id_provider"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={
                   productData && productData.id_provider
                     ? productData.id_provider
@@ -241,7 +265,7 @@ export default function EditarProduto() {
                 ))}
               </select>
             </div>
-            <div className="col-span-12">
+            <div className="col-span-12 lg:col-span-8">
               <label className="block mb-2 font-medium">Descrição*</label>
               <input
                 type="text"
@@ -249,11 +273,64 @@ export default function EditarProduto() {
                 name="descricao"
                 placeholder="Informe a descrição"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={
                   productData && productData.descricao
                     ? productData.descricao
                     : ""
+                }
+                required
+              />
+            </div>
+            <div className="col-span-12 lg:col-span-4">
+              <label className="block mb-2 font-medium">Categoria*</label>
+              <select
+                id="id_category"
+                name="id_category"
+                className="w-full p-2 rounded-lg border border-gray-300"
+                onChange={(e) => changeProductsFieldHandler(e)}
+                value={
+                  productData && productData.id_category
+                    ? productData.id_category
+                    : ""
+                }
+                required
+              >
+                <option value="">Selecione uma categoria</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-span-12">
+              <label className="block mb-2 font-medium">Materiais</label>
+              <input
+                type="text"
+                id="materiais"
+                name="materiais"
+                placeholder="Informe os materiais do produto"
+                className="w-full p-2 rounded-lg border border-gray-300"
+                onChange={(e) => changeProductsFieldHandler(e)}
+                value={
+                  productData && productData.materiais
+                    ? productData.materiais
+                    : ""
+                }
+              />
+            </div>
+            <div className="col-span-12 lg:col-span-4">
+              <label className="block mb-2 font-medium">Linha</label>
+              <input
+                type="text"
+                id="linha"
+                name="linha"
+                placeholder="Informe a linha do produto"
+                className="w-full p-2 rounded-lg border border-gray-300"
+                onChange={(e) => changeProductsFieldHandler(e)}
+                value={
+                  productData && productData.linha ? productData.linha : ""
                 }
                 required
               />
@@ -266,7 +343,7 @@ export default function EditarProduto() {
                 name="comprimento"
                 placeholder="Informe o comprimento"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={
                   productData && productData.comprimento
                     ? productData.comprimento
@@ -283,7 +360,7 @@ export default function EditarProduto() {
                 name="altura"
                 placeholder="Informe a altura"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={
                   productData && productData.altura ? productData.altura : ""
                 }
@@ -298,7 +375,7 @@ export default function EditarProduto() {
                 name="profundidade"
                 placeholder="Informe a profundidade"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={
                   productData && productData.profundidade
                     ? productData.profundidade
@@ -315,23 +392,8 @@ export default function EditarProduto() {
                 name="peso"
                 placeholder="Informe o peso suportado"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
+                onChange={(e) => changeProductsFieldHandler(e)}
                 value={productData && productData.peso ? productData.peso : ""}
-                required
-              />
-            </div>
-            <div className="col-span-12 lg:col-span-4">
-              <label className="block mb-2 font-medium">Linha</label>
-              <input
-                type="text"
-                id="linha"
-                name="linha"
-                placeholder="Informe a linha do produto"
-                className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProvidersFieldHandler(e)}
-                value={
-                  productData && productData.linha ? productData.linha : ""
-                }
                 required
               />
             </div>

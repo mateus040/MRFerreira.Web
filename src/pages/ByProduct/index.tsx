@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { getDownloadURL, ref } from "firebase/storage";
 import { firebaseStorage } from "../../../firebaseConfig";
 import Loading from "../../components/loading";
+import CategoriaModel from "../../interface/models/CategoriaModel";
 
 export default function ByProduct() {
   const { productId } = useParams();
@@ -16,11 +17,31 @@ export default function ByProduct() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [productInfo, setProductInfo] = useState<ProdutoModel>();
+  const [categories, setCategories] = useState<CategoriaModel[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const [searchParams] = useSearchParams();
 
   const query = searchParams.get("idProduct") || productId;
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://mrferreira-api.vercel.app/api/api/categories",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const categoriesData: CategoriaModel[] = response.data.results;
+
+      setCategories(categoriesData);
+    } catch (err) {
+      console.error("Erro ao buscar categorias:", err);
+    }
+  };
 
   const fetchProductInfo = async () => {
     setLoading(true);
@@ -67,6 +88,7 @@ export default function ByProduct() {
 
   useEffect(() => {
     fetchProductInfo();
+    fetchCategories();
   }, []);
 
   return (
@@ -75,7 +97,7 @@ export default function ByProduct() {
         <div className="px-8 lg:px-12 py-12 mt-10 container mx-auto">
           {loading && <Loading centered />}
           {!loading && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-5">
               <div className="col-span-6 flex items-center justify-center lg:-ms-10">
                 {imageUrl && (
                   <img src={imageUrl} className="h-80 object-contain" />
@@ -83,11 +105,29 @@ export default function ByProduct() {
               </div>
 
               <div className="col-span-6">
-                <p className="text-2xl font-semibold uppercase">
+                <p className="text-2xl font-semibold uppercase mb-1">
                   {productInfo?.nome}
                 </p>
-                <p className="text-xl mt-5 tracking-wider">Descrição</p>
-                <p className="text-md mt-4">{productInfo?.descricao}</p>
+                <span className="text-sm italic">
+                  Categoria:{" "}
+                  <span className="font-semibold">
+                    {
+                      categories.find(
+                        (provider) => provider.id === productInfo?.id_category
+                      )?.nome
+                    }
+                  </span>
+                </span>
+                <p className="text-xl mt-5 tracking-widest font-semibold uppercase">
+                  Descrição
+                </p>
+                <hr className="mt-1 border-2 border-black max-w-[90px]" />
+
+                <p className="text-md mt-2">{productInfo?.descricao}</p>
+                <p className="mt-6 font-semibold">
+                  Linha:{" "}
+                  <span className="font-normal">{productInfo?.linha}</span>
+                </p>
                 <div className="flex flex-col lg:flex-row lg:items-center">
                   <p className="mt-8 font-semibold">
                     Altura:{" "}
@@ -110,10 +150,6 @@ export default function ByProduct() {
                     <span className="font-normal">{productInfo?.peso}</span>
                   </p>
                 </div>
-                <p className="mt-6 font-semibold">
-                  Linha:{" "}
-                  <span className="font-normal">{productInfo?.linha}</span>
-                </p>
                 <p className="mt-8 lg:mt-6 font-semibold">
                   Mateirais:{" "}
                   <span className="font-normal text-sm">
