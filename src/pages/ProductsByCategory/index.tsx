@@ -2,7 +2,6 @@ import { Link, useParams } from "react-router-dom";
 import MainLayout from "../../components/Layouts/main";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from "react";
-import CategoriaModel from "../../interface/models/CategoriaModel";
 import ProdutoModel from "../../interface/models/ProdutoModel";
 import { formatNameForURL } from "../../utils/formatNameForURL";
 import axios from "axios";
@@ -17,7 +16,6 @@ export default function ProductsByCategory() {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [categories, setCategories] = useState<CategoriaModel[]>([]);
   const [products, setProducts] = useState<ProdutoModel[]>([]);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
 
@@ -75,24 +73,6 @@ export default function ProductsByCategory() {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await axios.get(
-        "https://mrferreira-api.vercel.app/api/api/categories",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const providersData: CategoriaModel[] = response.data.results;
-
-      setCategories(providersData);
-    } catch (err) {
-      console.error("Erro ao buscar categorias:", err);
-    }
-  };
-
   const fetchProviders = async () => {
     try {
       const response = await axios.get(
@@ -113,7 +93,6 @@ export default function ProductsByCategory() {
 
   useEffect(() => {
     fetchProductsByCategory();
-    fetchCategories();
     fetchProviders();
   }, []);
 
