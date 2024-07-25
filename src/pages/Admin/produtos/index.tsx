@@ -209,6 +209,12 @@ export default function Produtos() {
                     Fornecedor
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Linha
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
+                    Materiais
+                  </th>
+                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Comprimento
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
@@ -219,9 +225,6 @@ export default function Produtos() {
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Peso Sup.
-                  </th>
-                  <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
-                    Linha
                   </th>
                   <th className="w-24 p-3 text-sm font-semibold tracking-wide text-left">
                     Foto
@@ -255,6 +258,12 @@ export default function Produtos() {
                       }
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.linha}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
+                      {product.materiais}
+                    </td>
+                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                       {product.comprimento}
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
@@ -265,9 +274,6 @@ export default function Produtos() {
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                       {product.peso}
-                    </td>
-                    <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
-                      {product.linha}
                     </td>
                     <td className="p-3 text-sm text-gray-700 whitespace-nowrap">
                       {logos[product.foto] && (
@@ -334,6 +340,12 @@ export default function Produtos() {
                   </span>
                 </div>
                 <div className="text-sm">
+                  Linha: <span className="text-gray-700">{product.linha}</span>
+                </div>
+                <div className="text-sm">
+                  Materiais: <span className="text-gray-700">{product.materiais}</span>
+                </div>
+                <div className="text-sm">
                   Comprimento:{" "}
                   <span className="text-gray-700">{product.comprimento}</span>
                 </div>
@@ -347,9 +359,6 @@ export default function Produtos() {
                 </div>
                 <div className="text-sm">
                   Peso: <span className="text-gray-700">{product.peso}</span>
-                </div>
-                <div className="text-sm">
-                  Linha: <span className="text-gray-700">{product.linha}</span>
                 </div>
                 {logos[product.foto] && (
                   <img

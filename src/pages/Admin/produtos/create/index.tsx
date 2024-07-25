@@ -249,6 +249,30 @@ export default function AdicionarProdutos() {
               ))}
             </select>
           </div>
+          <div className="col-span-12">
+            <label className="block mb-2 font-medium">Materiais</label>
+            <input
+              type="text"
+              id="materiais"
+              name="materiais"
+              placeholder="Informe os materiais do produto"
+              className="w-full p-2 rounded-lg border border-gray-300"
+              onChange={(e) => changeProductsFieldHandler(e)}
+              required
+            />
+          </div>
+          <div className="col-span-12 lg:col-span-4">
+            <label className="block mb-2 font-medium">Linha</label>
+            <input
+              type="text"
+              id="linha"
+              name="linha"
+              placeholder="Informe a linha do produto"
+              className="w-full p-2 rounded-lg border border-gray-300"
+              onChange={(e) => changeProductsFieldHandler(e)}
+              required
+            />
+          </div>
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Comprimento</label>
             <input
@@ -292,18 +316,6 @@ export default function AdicionarProdutos() {
               id="peso"
               name="peso"
               placeholder="Informe o peso suportado"
-              className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
-            />
-          </div>
-          <div className="col-span-12 lg:col-span-4">
-            <label className="block mb-2 font-medium">Linha</label>
-            <input
-              type="text"
-              id="linha"
-              name="linha"
-              placeholder="Informe a linha do produto"
               className="w-full p-2 rounded-lg border border-gray-300"
               onChange={(e) => changeProductsFieldHandler(e)}
               required
