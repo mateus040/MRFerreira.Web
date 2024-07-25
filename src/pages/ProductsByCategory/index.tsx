@@ -1,4 +1,4 @@
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MainLayout from "../../components/Layouts/main";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useState } from "react";
@@ -14,10 +14,6 @@ import FornecedorModel from "../../interface/models/FornecedorModel";
 export default function ProductsByCategory() {
   const { token } = useAuth();
   const { categoryId } = useParams();
-
-  const [searchParams] = useSearchParams();
-
-  const query = searchParams.get("idCategory") || categoryId;
 
   const [loading, setLoading] = useState<boolean>(false);
 

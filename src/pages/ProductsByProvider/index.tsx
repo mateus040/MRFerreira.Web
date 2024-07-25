@@ -1,4 +1,4 @@
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MainLayout from "../../components/Layouts/main";
 import { useEffect, useState } from "react";
 import ProdutoModel from "../../interface/models/ProdutoModel";
@@ -19,10 +19,6 @@ export default function ProductsByProvider() {
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [fotos, setFotos] = useState<{ [key: string]: string }>({});
 
-  const [searchParams] = useSearchParams();
-
-  const query = searchParams.get("id") || providerId;
-
   const processedProducts = products.map((product) => {
     const productNameURL = formatNameForURL(product.nome);
 
@@ -37,7 +33,7 @@ export default function ProductsByProvider() {
 
     try {
       const response = await axios.get(
-        `https://mrferreira-api.vercel.app/api/api/providers/${query}/products`,
+        `https://mrferreira-api.vercel.app/api/api/providers/${providerId}/products`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
