@@ -140,7 +140,7 @@ export default function ProductsByProvider() {
                         }
                       </p>
                       <Link
-                        to={`/fornecedor/${providerId}/${product.productNameURL}?idProduct=${product.id}`}
+                        to={`/fornecedor/${providerId}/${product.productNameURL}`}
                         className="mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
                       >
                         Detalhes

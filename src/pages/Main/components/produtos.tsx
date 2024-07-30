@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import ProdutoModel from "../../../interface/models/ProdutoModel";
 import FornecedorModel from "../../../interface/models/FornecedorModel";
+import { formatNameForURL } from "../../../utils/formatNameForURL";
 
 interface Props {
   products: ProdutoModel[];
@@ -17,13 +18,6 @@ export default function Produtos({
   providers,
   fotos,
 }: Props) {
-  // Função para formatar nomes para uma URL válida
-  const formatNameForURL = (name: string) =>
-    name
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
-
   // Processando os produtos para incluir os dados do fornecedor e URLs formatadas
   const processedProducts = products.slice(0, 5).map((product) => {
     const provider = providers.find(

@@ -20,10 +20,6 @@ export default function ByProduct() {
   const [categories, setCategories] = useState<CategoriaModel[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const [searchParams] = useSearchParams();
-
-  const query = searchParams.get("idProduct") || productId;
-
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
@@ -48,14 +44,14 @@ export default function ByProduct() {
 
     try {
       const response = await axios.get(
-        `https://mrferreira-api.vercel.app/api/api/products/${query}`,
+        `https://mrferreira-api.vercel.app/api/api/products/${productId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      const productData: ProdutoModel = response.data.products;
+      const productData: ProdutoModel = response.data.product;
 
       setProductInfo(productData);
 
