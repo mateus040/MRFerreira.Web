@@ -1,13 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 import BreadCrumb, { Page } from "../../../../components/breadCrumb";
 import { useAuth } from "../../../../context/AuthContext";
-import { ChangeEvent, useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import AdminLayout from "../../../../components/Layouts/admin";
 import Loading from "../../../../components/loading";
 import FornecedorModel from "../../../../interface/models/FornecedorModel";
 import CategoriaModel from "../../../../interface/models/CategoriaModel";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface ProductField {
   nome: string;
@@ -32,33 +33,17 @@ export default function EditarProduto() {
   const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
 
   const breadCrumbHistory: Page[] = [
-    {
-      link: "/admin",
-      name: "Início",
-    },
-    {
-      link: "/admin/produtos",
-      name: "Produtos",
-    },
-    {
-      link: `/admin/fornecedores/editar/${productId}`,
-      name: `Editar produto`,
-    },
+    { link: "/admin", name: "Início" },
+    { link: "/admin/produtos", name: "Produtos" },
+    { link: `/admin/fornecedores/editar/${productId}`, name: "Editar produto" },
   ];
 
-  const [productData, setProductData] = useState<ProductField>({
-    nome: "",
-    descricao: "",
-    comprimento: 0,
-    altura: 0,
-    profundidade: 0,
-    peso: 0,
-    linha: "",
-    materiais: "",
-    foto: "",
-    id_provider: "",
-    id_category: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ProductField>();
 
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [categories, setCategories] = useState<CategoriaModel[]>([]);
@@ -70,12 +55,20 @@ export default function EditarProduto() {
       const response = await axios.get(
         `https://mrferreira-api.vercel.app/api/api/products/${productId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setProductData(response.data.products);
+      const product = response.data.product;
+      setValue("nome", product.nome);
+      setValue("descricao", product.descricao);
+      setValue("comprimento", product.comprimento);
+      setValue("altura", product.altura);
+      setValue("profundidade", product.profundidade);
+      setValue("peso", product.peso);
+      setValue("linha", product.linha);
+      setValue("materiais", product.materiais);
+      setValue("id_provider", product.id_provider);
+      setValue("id_category", product.id_category);
     } catch (error) {
       console.error("Erro ao buscar dados do produto:", error);
       toast.error("Erro ao buscar dados do produto.");
@@ -89,37 +82,12 @@ export default function EditarProduto() {
       const response = await axios.get(
         "https://mrferreira-api.vercel.app/api/api/providers",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      const providersData: FornecedorModel[] = response.data.results;
-
-      setProviders(providersData);
-    } catch (err) {
-      console.error("Erro ao buscar fornecedores:", err);
-    }
-  };
-
-  const changeProductsFieldHandler = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { id, value } = e.target;
-    // Verifica se o valor é null ou undefined e define como string vazia
-    const sanitizedValue = value === null || value === undefined ? "" : value;
-    setProductData((prevData) => ({
-      ...prevData,
-      [id]: sanitizedValue,
-    }));
-  };
-
-  const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProductData({
-        ...productData,
-        foto: e.target.files[0],
-      });
+      setProviders(response.data.results);
+    } catch (error) {
+      console.error("Erro ao buscar fornecedores:", error);
     }
   };
 
@@ -128,86 +96,67 @@ export default function EditarProduto() {
       const response = await axios.get(
         "https://mrferreira-api.vercel.app/api/api/categories",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      const categoriesData: CategoriaModel[] = response.data.results;
-
-      setCategories(categoriesData);
-    } catch (err) {
-      console.error("Erro ao buscar categorias:", err);
+      setCategories(response.data.results);
+    } catch (error) {
+      console.error("Erro ao buscar categorias:", error);
     }
   };
 
-  const onSubmitChange = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
+  const onSubmitChange: SubmitHandler<ProductField> = async (data) => {
     setLoading(true);
 
     const formData = new FormData();
     formData.append("_method", "PUT");
-    formData.append("nome", productData.nome);
-    formData.append("descricao", productData.descricao);
-    formData.append("comprimento", productData.comprimento.toString());
-    formData.append("altura", productData.altura.toString());
-    formData.append("profundidade", productData.profundidade.toString());
-    formData.append("peso", productData.peso.toString());
-    formData.append("linha", productData.linha);
-    formData.append("materiais", productData.materiais);
-    formData.append("id_provider", productData.id_provider);
-    formData.append("id_category", productData.id_category);
+    formData.append("nome", data.nome);
+    formData.append("descricao", data.descricao);
+    formData.append("comprimento", data.comprimento.toString());
+    formData.append("altura", data.altura.toString());
+    formData.append("profundidade", data.profundidade.toString());
+    formData.append("peso", data.peso.toString());
+    formData.append("linha", data.linha);
+    formData.append("materiais", data.materiais);
+    formData.append("id_provider", data.id_provider);
+    formData.append("id_category", data.id_category);
 
-    // Verifica se foto é uma instância de File e a adiciona ao FormData
-    if (productData.foto instanceof File) {
-      formData.append("foto", productData.foto);
+    if (data.foto instanceof File) {
+      formData.append("foto", data.foto);
     }
 
-    toast.promise(
-      new Promise((resolve, reject) => {
-        axios
-          .post(
-            `https://mrferreira-api.vercel.app/api/api/products/update/${productId}`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((response: AxiosResponse) => {
-            resolve(response.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }),
-      {
-        loading: "Editando produto...",
-        success: () => {
-          navigate("/admin/produtos");
-          return "Produto editado com sucesso!";
-        },
-        error: (error) => {
-          if (axios.isAxiosError(error)) {
-            return (
-              "Erro de solicitação: " + (error.response?.data || error.message)
-            );
-          } else if (error instanceof Error) {
-            return "Erro desconhecido: " + error.message;
-          } else {
-            return "Erro inesperado: " + error;
+    toast
+      .promise(
+        axios.post(
+          `https://mrferreira-api.vercel.app/api/api/products/update/${productId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        },
-      }
-    );
+        ),
+        {
+          loading: "Editando produto...",
+          success: () => {
+            navigate("/admin/produtos");
+            return "Produto editado com sucesso!";
+          },
+          error: (error) => {
+            if (axios.isAxiosError(error)) {
+              return `Erro de solicitação: ${
+                error.response?.data || error.message
+              }`;
+            } else if (error instanceof Error) {
+              return `Erro desconhecido: ${error.message}`;
+            } else {
+              return `Erro inesperado: ${error}`;
+            }
+          },
+        }
+      )
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -228,34 +177,29 @@ export default function EditarProduto() {
       {loadingProducts && <Loading centered />}
 
       {!loadingProducts && (
-        <form className="mt-8">
+        <form className="mt-8" onSubmit={handleSubmit(onSubmitChange)}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-6">
             <div className="col-span-12 lg:col-span-8">
               <label className="block mb-2 font-medium">Nome*</label>
               <input
                 type="text"
                 id="nome"
-                name="nome"
                 placeholder="Informe o nome do produto"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={productData && productData.nome ? productData.nome : ""}
-                required
+                {...register("nome", { required: "O nome é obrigatório" })}
               />
+              {errors.nome && (
+                <p className="text-red-500 text-sm">{errors.nome.message}</p>
+              )}
             </div>
             <div className="col-span-12 lg:col-span-4">
               <label className="block mb-2 font-medium">Fornecedor*</label>
               <select
                 id="id_provider"
-                name="id_provider"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.id_provider
-                    ? productData.id_provider
-                    : ""
-                }
-                required
+                {...register("id_provider", {
+                  required: "O fornecedor é obrigatório",
+                })}
               >
                 <option value="">Selecione um fornecedor</option>
                 {providers.map((provider) => (
@@ -264,37 +208,37 @@ export default function EditarProduto() {
                   </option>
                 ))}
               </select>
+              {errors.id_provider && (
+                <p className="text-red-500 text-sm">
+                  {errors.id_provider.message}
+                </p>
+              )}
             </div>
             <div className="col-span-12 lg:col-span-8">
               <label className="block mb-2 font-medium">Descrição*</label>
               <input
                 type="text"
                 id="descricao"
-                name="descricao"
                 placeholder="Informe a descrição"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.descricao
-                    ? productData.descricao
-                    : ""
-                }
-                required
+                {...register("descricao", {
+                  required: "A descrição é obrigatória",
+                })}
               />
+              {errors.descricao && (
+                <p className="text-red-500 text-sm">
+                  {errors.descricao.message}
+                </p>
+              )}
             </div>
             <div className="col-span-12 lg:col-span-4">
               <label className="block mb-2 font-medium">Categoria*</label>
               <select
                 id="id_category"
-                name="id_category"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.id_category
-                    ? productData.id_category
-                    : ""
-                }
-                required
+                {...register("id_category", {
+                  required: "A categoria é obrigatória",
+                })}
               >
                 <option value="">Selecione uma categoria</option>
                 {categories.map((category) => (
@@ -303,21 +247,20 @@ export default function EditarProduto() {
                   </option>
                 ))}
               </select>
+              {errors.id_category && (
+                <p className="text-red-500 text-sm">
+                  {errors.id_category.message}
+                </p>
+              )}
             </div>
-            <div className="col-span-12">
+            <div className="col-span-12 lg:col-span-12">
               <label className="block mb-2 font-medium">Materiais</label>
               <input
                 type="text"
                 id="materiais"
-                name="materiais"
-                placeholder="Informe os materiais do produto"
+                placeholder="Informe os materiais"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.materiais
-                    ? productData.materiais
-                    : ""
-                }
+                {...register("materiais")}
               />
             </div>
             <div className="col-span-12 lg:col-span-4">
@@ -325,98 +268,73 @@ export default function EditarProduto() {
               <input
                 type="text"
                 id="linha"
-                name="linha"
                 placeholder="Informe a linha do produto"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.linha ? productData.linha : ""
-                }
-                required
+                {...register("linha")}
               />
             </div>
             <div className="col-span-12 lg:col-span-4">
               <label className="block mb-2 font-medium">Comprimento</label>
               <input
-                type="text"
+                type="number"
                 id="comprimento"
-                name="comprimento"
                 placeholder="Informe o comprimento"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.comprimento
-                    ? productData.comprimento
-                    : ""
-                }
-                required
+                {...register("comprimento")}
               />
             </div>
             <div className="col-span-12 lg:col-span-4">
               <label className="block mb-2 font-medium">Altura</label>
               <input
-                type="text"
+                type="number"
                 id="altura"
-                name="altura"
                 placeholder="Informe a altura"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.altura ? productData.altura : ""
-                }
-                required
+                {...register("altura")}
               />
             </div>
             <div className="col-span-12 lg:col-span-4">
               <label className="block mb-2 font-medium">Profundidade</label>
               <input
-                type="text"
+                type="number"
                 id="profundidade"
-                name="profundidade"
                 placeholder="Informe a profundidade"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={
-                  productData && productData.profundidade
-                    ? productData.profundidade
-                    : ""
-                }
-                required
+                {...register("profundidade")}
               />
             </div>
             <div className="col-span-12 lg:col-span-4">
-              <label className="block mb-2 font-medium">Peso suportado</label>
+              <label className="block mb-2 font-medium">Peso</label>
               <input
-                type="text"
+                type="number"
                 id="peso"
-                name="peso"
-                placeholder="Informe o peso suportado"
+                placeholder="Informe o peso"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => changeProductsFieldHandler(e)}
-                value={productData && productData.peso ? productData.peso : ""}
-                required
+                {...register("peso")}
               />
             </div>
             <div className="col-span-12 lg:col-span-4">
-              <label className="block mb-2 font-medium">Foto</label>
+              <label className="block mb-2 font-medium">Foto*</label>
               <input
                 type="file"
                 id="foto"
-                name="foto"
-                accept="image/*"
                 className="w-full p-2 rounded-lg border border-gray-300"
-                onChange={(e) => handleLogoChange(e)}
+                {...register("foto")}
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setValue("foto", e.target.files[0]);
+                  }
+                }}
               />
             </div>
           </div>
           <div className="flex justify-end mt-8">
             <button
               type="submit"
-              onClick={(e) => onSubmitChange(e)}
               className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all"
               disabled={loading}
             >
-              Atualizar
+              Editar
             </button>
           </div>
         </form>

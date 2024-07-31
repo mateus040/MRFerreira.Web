@@ -4,7 +4,7 @@ import AdminLayout from "../../../components/Layouts/admin";
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect, useState } from "react";
 import ProdutoModel from "../../../interface/models/ProdutoModel";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { getDownloadURL, ref } from "firebase/storage";
 import { firebaseStorage } from "../../../../firebaseConfig";
 import toast from "react-hot-toast";
@@ -124,50 +124,44 @@ export default function Produtos() {
   const deleteProduct = async (productId: string) => {
     setLoadingDelete(true);
 
-    toast.promise(
-      new Promise((resolve, reject) => {
-        axios
-          .delete(
-            `https://mrferreira-api.vercel.app/api/api/products/delete/${productId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((response: AxiosResponse) => {
-            resolve(response.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
-          .finally(() => {
-            setLoadingDelete(false);
-          });
-      }),
-      {
-        loading: "Excluindo produto...",
-        success: () => {
-          const updatedProducts = products.filter(
-            (product) => product.id !== productId
-          );
-          setProducts(updatedProducts);
-          fetchProducts();
-          return "Produto excluído com sucesso!";
-        },
-        error: (error) => {
-          if (axios.isAxiosError(error)) {
-            return (
-              "Erro de solicitação: " + (error.response?.data || error.message)
-            );
-          } else if (error instanceof Error) {
-            return "Erro desconhecido: " + error.message;
-          } else {
-            return "Erro inesperado: " + error;
+    toast
+      .promise(
+        axios.delete(
+          `https://mrferreira-api.vercel.app/api/api/products/delete/${productId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        },
-      }
-    );
+        ),
+
+        {
+          loading: "Excluindo produto...",
+          success: () => {
+            const updatedProducts = products.filter(
+              (product) => product.id !== productId
+            );
+            setProducts(updatedProducts);
+            fetchProducts();
+            return "Produto excluído com sucesso!";
+          },
+          error: (error) => {
+            if (axios.isAxiosError(error)) {
+              return (
+                "Erro de solicitação: " +
+                (error.response?.data || error.message)
+              );
+            } else if (error instanceof Error) {
+              return "Erro desconhecido: " + error.message;
+            } else {
+              return "Erro inesperado: " + error;
+            }
+          },
+        }
+      )
+      .finally(() => {
+        setLoadingDelete(false);
+      });
   };
 
   useEffect(() => {
@@ -343,7 +337,8 @@ export default function Produtos() {
                   Linha: <span className="text-gray-700">{product.linha}</span>
                 </div>
                 <div className="text-sm">
-                  Materiais: <span className="text-gray-700">{product.materiais}</span>
+                  Materiais:{" "}
+                  <span className="text-gray-700">{product.materiais}</span>
                 </div>
                 <div className="text-sm">
                   Comprimento:{" "}

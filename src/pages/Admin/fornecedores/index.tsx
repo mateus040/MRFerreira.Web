@@ -3,7 +3,7 @@ import AdminLayout from "../../../components/Layouts/admin";
 import BreadCrumb, { Page } from "../../../components/breadCrumb";
 import { useAuth } from "../../../context/AuthContext";
 import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import {
   firebaseStorage,
   ref,
@@ -85,50 +85,44 @@ export default function Fornecedores() {
   const deleteProvider = async (providerId: string) => {
     setLoadingDelete(true);
 
-    toast.promise(
-      new Promise((resolve, reject) => {
-        axios
-          .delete(
-            `https://mrferreira-api.vercel.app/api/api/providers/delete/${providerId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((response: AxiosResponse) => {
-            resolve(response.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
-          .finally(() => {
-            setLoadingDelete(false);
-          });
-      }),
-      {
-        loading: "Excluindo fornecedor...",
-        success: () => {
-          const updatedProviders = providers.filter(
-            (provider) => provider.id !== providerId
-          );
-          setProviders(updatedProviders);
-          fetchProviders();
-          return "Fornecedor excluído com sucesso!";
-        },
-        error: (error) => {
-          if (axios.isAxiosError(error)) {
-            return (
-              "Erro de solicitação: " + (error.response?.data || error.message)
-            );
-          } else if (error instanceof Error) {
-            return "Erro desconhecido: " + error.message;
-          } else {
-            return "Erro inesperado: " + error;
+    toast
+      .promise(
+        axios.delete(
+          `https://mrferreira-api.vercel.app/api/api/providers/delete/${providerId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        },
-      }
-    );
+        ),
+
+        {
+          loading: "Excluindo fornecedor...",
+          success: () => {
+            const updatedProviders = providers.filter(
+              (provider) => provider.id !== providerId
+            );
+            setProviders(updatedProviders);
+            fetchProviders();
+            return "Fornecedor excluído com sucesso!";
+          },
+          error: (error) => {
+            if (axios.isAxiosError(error)) {
+              return (
+                "Erro de solicitação: " +
+                (error.response?.data || error.message)
+              );
+            } else if (error instanceof Error) {
+              return "Erro desconhecido: " + error.message;
+            } else {
+              return "Erro inesperado: " + error;
+            }
+          },
+        }
+      )
+      .finally(() => {
+        setLoadingDelete(false);
+      });
   };
 
   useEffect(() => {
@@ -344,7 +338,9 @@ export default function Fornecedores() {
       )}
 
       {!loading && providers.length === 0 && (
-        <div className="text-center text-gray-500 mt-5">Nenhum fornecedor encontrado</div>
+        <div className="text-center text-gray-500 mt-5">
+          Nenhum fornecedor encontrado
+        </div>
       )}
     </AdminLayout>
   );

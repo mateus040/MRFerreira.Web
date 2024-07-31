@@ -2,11 +2,12 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../../../components/Layouts/admin";
 import BreadCrumb, { Page } from "../../../../components/breadCrumb";
 import { useAuth } from "../../../../context/AuthContext";
-import { ChangeEvent, useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import FornecedorModel from "../../../../interface/models/FornecedorModel";
 import CategoriaModel from "../../../../interface/models/CategoriaModel";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 interface ProductField {
   nome: string;
@@ -17,7 +18,7 @@ interface ProductField {
   peso: number;
   linha: string;
   materiais: string;
-  foto: File | string;
+  foto: FileList;
   id_provider: string;
   id_category: string;
 }
@@ -39,44 +40,17 @@ export default function AdicionarProdutos() {
   ];
 
   const { token } = useAuth();
-
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [providers, setProviders] = useState<FornecedorModel[]>([]);
   const [categories, setCategories] = useState<CategoriaModel[]>([]);
 
-  const [productField, setProductField] = useState<ProductField>({
-    nome: "",
-    descricao: "",
-    comprimento: 0,
-    altura: 0,
-    profundidade: 0,
-    peso: 0,
-    linha: "",
-    materiais: "",
-    foto: "",
-    id_provider: "",
-    id_category: "",
-  });
-
-  const changeProductsFieldHandler = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setProductField({
-      ...productField,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProductField({
-        ...productField,
-        foto: e.target.files[0],
-      });
-    }
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProductField>();
 
   const fetchProviders = async () => {
     try {
@@ -89,7 +63,6 @@ export default function AdicionarProdutos() {
         }
       );
       const providersData: FornecedorModel[] = response.data.results;
-
       setProviders(providersData);
     } catch (err) {
       console.error("Erro ao buscar fornecedores:", err);
@@ -107,75 +80,65 @@ export default function AdicionarProdutos() {
         }
       );
       const categoriesData: CategoriaModel[] = response.data.results;
-
       setCategories(categoriesData);
     } catch (err) {
       console.error("Erro ao buscar categorias:", err);
     }
   };
 
-  const onSubmitChange = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
+  const onSubmit: SubmitHandler<ProductField> = async (data) => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("nome", productField.nome);
-    formData.append("descricao", productField.descricao);
-    formData.append("comprimento", productField.comprimento.toString());
-    formData.append("altura", productField.altura.toString());
-    formData.append("profundidade", productField.profundidade.toString());
-    formData.append("peso", productField.peso.toString());
-    formData.append("linha", productField.linha);
-    formData.append("materiais", productField.materiais);
-    formData.append("foto", productField.foto);
-    formData.append("id_provider", productField.id_provider);
-    formData.append("id_category", productField.id_category);
+    formData.append("nome", data.nome);
+    formData.append("descricao", data.descricao);
+    formData.append("comprimento", data.comprimento.toString());
+    formData.append("altura", data.altura.toString());
+    formData.append("profundidade", data.profundidade.toString());
+    formData.append("peso", data.peso.toString());
+    formData.append("linha", data.linha);
+    formData.append("materiais", data.materiais);
+    if (data.foto.length > 0) {
+      formData.append("foto", data.foto[0]);
+    }
+    formData.append("id_provider", data.id_provider);
+    formData.append("id_category", data.id_category);
 
-    toast.promise(
-      new Promise((resolve, reject) => {
-        axios
-          .post(
-            "https://mrferreira-api.vercel.app/api/api/products/add",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((response: AxiosResponse) => {
-            resolve(response.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }),
-      {
-        loading: "Cadastrando produto...",
-        success: () => {
-          navigate("/admin/produtos");
-          return "Produto criado com sucesso!";
-        },
-        error: (error) => {
-          if (axios.isAxiosError(error)) {
-            return (
-              "Erro de solicitação: " + (error.response?.data || error.message)
-            );
-          } else if (error instanceof Error) {
-            return "Erro desconhecido: " + error.message;
-          } else {
-            return "Erro inesperado: " + error;
+    toast
+      .promise(
+        axios.post(
+          "https://mrferreira-api.vercel.app/api/api/products/add",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        },
-      }
-    );
+        ),
+        {
+          loading: "Cadastrando produto...",
+          success: () => {
+            navigate("/admin/produtos");
+            return "Produto criado com sucesso!";
+          },
+          error: (error) => {
+            if (axios.isAxiosError(error)) {
+              return (
+                "Erro de solicitação: " +
+                (error.response?.data || error.message)
+              );
+            } else if (error instanceof Error) {
+              return "Erro desconhecido: " + error.message;
+            } else {
+              return "Erro inesperado: " + error;
+            }
+          },
+        }
+      )
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -189,28 +152,33 @@ export default function AdicionarProdutos() {
         <BreadCrumb history={breadCrumbHistory} />
       </div>
 
-      <form className="mt-8">
+      <form className="mt-8" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-6">
           <div className="col-span-12 lg:col-span-8">
             <label className="block mb-2 font-medium">Nome*</label>
             <input
               type="text"
               id="nome"
-              name="nome"
+              {...register("nome", { required: "O nome é obrigatório" })}
               placeholder="Informe o nome do produto"
-              className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
+              className={`w-full p-2 rounded-lg border ${
+                errors.nome ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.nome && (
+              <p className="text-red-500 text-sm">{errors.nome.message}</p>
+            )}
           </div>
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Fornecedor*</label>
             <select
               id="id_provider"
-              name="id_provider"
-              className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
+              {...register("id_provider", {
+                required: "O fornecedor é obrigatório",
+              })}
+              className={`w-full p-2 rounded-lg border ${
+                errors.id_provider ? "border-red-500" : "border-gray-300"
+              }`}
             >
               <option value="">Selecione um fornecedor</option>
               {providers.map((provider) => (
@@ -219,27 +187,39 @@ export default function AdicionarProdutos() {
                 </option>
               ))}
             </select>
+            {errors.id_provider && (
+              <p className="text-red-500 text-sm">
+                {errors.id_provider.message}
+              </p>
+            )}
           </div>
           <div className="col-span-12 lg:col-span-8">
             <label className="block mb-2 font-medium">Descrição*</label>
             <input
               type="text"
               id="descricao"
-              name="descricao"
+              {...register("descricao", {
+                required: "A descrição é obrigatória",
+              })}
               placeholder="Informe a descrição"
-              className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
+              className={`w-full p-2 rounded-lg border ${
+                errors.descricao ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.descricao && (
+              <p className="text-red-500 text-sm">{errors.descricao.message}</p>
+            )}
           </div>
           <div className="col-span-12 lg:col-span-4">
             <label className="block mb-2 font-medium">Categoria*</label>
             <select
               id="id_category"
-              name="id_category"
-              className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
+              {...register("id_category", {
+                required: "A categoria é obrigatória",
+              })}
+              className={`w-full p-2 rounded-lg border ${
+                errors.id_category ? "border-red-500" : "border-gray-300"
+              }`}
             >
               <option value="">Selecione uma categoria</option>
               {categories.map((category) => (
@@ -248,16 +228,20 @@ export default function AdicionarProdutos() {
                 </option>
               ))}
             </select>
+            {errors.id_category && (
+              <p className="text-red-500 text-sm">
+                {errors.id_category.message}
+              </p>
+            )}
           </div>
           <div className="col-span-12">
             <label className="block mb-2 font-medium">Materiais</label>
             <input
               type="text"
               id="materiais"
-              name="materiais"
+              {...register("materiais")}
               placeholder="Informe os materiais do produto"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
@@ -265,59 +249,49 @@ export default function AdicionarProdutos() {
             <input
               type="text"
               id="linha"
-              name="linha"
-              placeholder="Informe a linha do produto"
+              {...register("linha")}
+              placeholder="Informe a linha"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <label className="block mb-2 font-medium">Comprimento</label>
+            <label className="block mb-2 font-medium">Comprimento (cm)</label>
             <input
               type="number"
               id="comprimento"
-              name="comprimento"
+              {...register("comprimento", { valueAsNumber: true })}
               placeholder="Informe o comprimento"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <label className="block mb-2 font-medium">Altura</label>
+            <label className="block mb-2 font-medium">Altura (cm)</label>
             <input
               type="number"
               id="altura"
-              name="altura"
+              {...register("altura", { valueAsNumber: true })}
               placeholder="Informe a altura"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <label className="block mb-2 font-medium">Profundidade</label>
+            <label className="block mb-2 font-medium">Profundidade (cm)</label>
             <input
               type="number"
               id="profundidade"
-              name="profundidade"
+              {...register("profundidade", { valueAsNumber: true })}
               placeholder="Informe a profundidade"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <label className="block mb-2 font-medium">Peso suportado</label>
+            <label className="block mb-2 font-medium">Peso (kg)</label>
             <input
               type="number"
               id="peso"
-              name="peso"
-              placeholder="Informe o peso suportado"
+              {...register("peso", { valueAsNumber: true })}
+              placeholder="Informe o peso"
               className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => changeProductsFieldHandler(e)}
-              required
             />
           </div>
           <div className="col-span-12 lg:col-span-4">
@@ -325,18 +299,20 @@ export default function AdicionarProdutos() {
             <input
               type="file"
               id="foto"
-              name="foto"
-              accept="image/*"
-              className="w-full p-2 rounded-lg border border-gray-300"
-              onChange={(e) => handleLogoChange(e)}
-              required
+              {...register("foto", { required: "A foto é obrigatória" })}
+              className={`w-full p-2 rounded-lg border ${
+                errors.foto ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.foto && (
+              <p className="text-red-500 text-sm">{errors.foto.message}</p>
+            )}
           </div>
         </div>
+
         <div className="flex justify-end mt-8">
           <button
             type="submit"
-            onClick={(e) => onSubmitChange(e)}
             className="rounded-full px-8 py-2 bg-slate-900 text-white hover:bg-slate-800 transition-all"
             disabled={loading}
           >
