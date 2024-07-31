@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import Contato from "../Main/components/contato";
 import ProdutoModel from "../../interface/models/ProdutoModel";
 import axios from "axios";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getDownloadURL, ref } from "firebase/storage";
 import { firebaseStorage } from "../../../firebaseConfig";
