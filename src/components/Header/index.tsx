@@ -62,6 +62,7 @@ export default function Header() {
           <p className="font-semibold mx-4" style={{ fontSize: "12px" }}>
             Representações
           </p>
+          {/* <img src="/images/logo-transparente.png" alt="logo" className="h-20 w-20" /> */}
         </Link>
         <div
           className={`nav-links duration-500 lg:static absolute bg-white lg:min-h-fit min-h-[60vh] left-0 ${
