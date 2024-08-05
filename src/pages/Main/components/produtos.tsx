@@ -10,7 +10,8 @@ interface Props {
   products: ProdutoModel[];
   providers: FornecedorModel[];
   fotos: { [key: string]: string };
-  //loading: boolean;
+  // loadingProducts: boolean;
+  // loadingProviders: boolean;
 }
 
 export default function Produtos({
@@ -44,56 +45,61 @@ export default function Produtos({
           Fique por dentro dos últimos lançamentos
         </p>
       </div>
-      <div className="mt-8">
-        <Swiper
-          className="product-slider"
-          spaceBetween={30}
-          loop={false}
-          autoplay={{ delay: 7500, disableOnInteraction: false }}
-          initialSlide={0}
-          breakpoints={{
-            640: {
-              slidesPerView: 1,
-            },
-            768: {
-              slidesPerView: 2,
-            },
-            1024: {
-              slidesPerView: 3,
-            },
-          }}
-        >
-          {processedProducts.map((product) => (
-            <SwiperSlide key={product.id}>
-              <div className="product-slider bg-white px-20 py-16 rounded-lg">
-                <div className="flex flex-col items-center justify-center">
-                  <div className="hover:scale-105 transition-transform cursor-pointer">
-                    {fotos[product.foto] && (
-                      <img
-                        src={fotos[product.foto]}
-                        className="h-52 object-contain"
-                      />
-                    )}
-                  </div>
 
-                  <p className="mt-8 text-xl font-semibold text-center">
-                    {product.nome}
-                  </p>
-                  <p className="mt-3 text-md text-center">
-                    {product.providerName}
-                  </p>
-                  <Link
-                    to={`/fornecedor/${product.providerNameURL}/${product.productNameURL}`}
-                    className="flex items-center justify-center w-[230px] mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
-                  >
-                    Detalhes
-                  </Link>
+      {/* {loadingProducts && loadingProviders && <SkeletonLoadingCards />} */}
+
+      {/* {!loadingProducts && !loadingProviders && ( */}
+        <div className="mt-8">
+          <Swiper
+            className="product-slider"
+            spaceBetween={30}
+            loop={false}
+            autoplay={{ delay: 7500, disableOnInteraction: false }}
+            initialSlide={0}
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+            }}
+          >
+            {processedProducts.map((product) => (
+              <SwiperSlide key={product.id}>
+                <div className="product-slider bg-white px-20 py-16 rounded-lg">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="hover:scale-105 transition-transform cursor-pointer">
+                      {fotos[product.foto] && (
+                        <img
+                          src={fotos[product.foto]}
+                          className="h-52 object-contain"
+                        />
+                      )}
+                    </div>
+
+                    <p className="mt-8 text-xl font-semibold text-center">
+                      {product.nome}
+                    </p>
+                    <p className="mt-3 text-md text-center">
+                      {product.providerName}
+                    </p>
+                    <Link
+                      to={`/fornecedor/${product.providerNameURL}/${product.productNameURL}`}
+                      className="flex items-center justify-center w-[230px] mt-5 -mb-5 border-2 border-black rounded px-8 py-2 hover:bg-black hover:text-white transition-all"
+                    >
+                      Detalhes
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      {/* )} */}
     </div>
   );
 }
