@@ -41,7 +41,7 @@ export default function Produtos({
           Conheça alguns de nossos produtos
         </h1>
         <p className="text-md mt-3 text-gray-600">
-          Fique por dentro das últimas novidades
+          Fique por dentro dos últimos lançamentos
         </p>
       </div>
       <div className="mt-8">
